@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+    <item
+        android:drawable="@drawable/pic_flash"
+        android:duration="3000" />
+    <item
+        android:drawable="@drawable/pic_gossip"
+        android:duration="3000" />
+    <item
+        android:drawable="@drawable/pic_supergirl"
+        android:duration="3000" />
+    <item
+        android:drawable="@drawable/pic_riverdale"
+        android:duration="4000" />
+    <item
+        android:drawable="@drawable/pic_grown"
+        android:duration="3000" />
+    <item
+        android:drawable="@drawable/pic_lightning"
+        android:duration="3000" />
+    <item
+        android:drawable="@drawable/pic_jane"
+        android:duration="3000" />
+    <item
+        android:drawable="@drawable/pic_supernatural"
+        android:duration="4000" />
+
+
+</animation-list>

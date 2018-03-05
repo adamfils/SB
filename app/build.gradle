@@ -1,0 +1,79 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.adamapps.toxic"
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.afollestad:easyvideoplayer:0.3.0'
+    implementation 'org.jsoup:jsoup:1.11.2'
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
+    //Firebase
+    implementation 'com.google.firebase:firebase-auth:11.0.0'
+    implementation 'com.google.firebase:firebase-database:11.0.0'
+    implementation 'com.google.firebase:firebase-storage:11.0.0'
+    implementation 'com.google.firebase:firebase-core:11.0.0'
+    implementation 'com.google.firebase:firebase-ads:11.0.0'
+    implementation 'com.firebaseui:firebase-ui:0.6.1'
+    implementation 'com.google.android.gms:play-services-auth:11.0.0'
+
+    //implementation 'com.google.firebase:firebase-ads:11.8.0'
+    //implementation 'com.google.firebase:firebase-core:11.8.0'
+    //implementation 'com.google.firebase:firebase-database:11.8.0'
+    //implementation 'com.google.firebase:firebase-auth:11.8.0'
+    //implementation 'com.firebaseui:firebase-ui:3.2.1'
+    //implementation 'com.google.android.gms:play-services-auth:11.8.0'
+    implementation 'com.daimajia.easing:library:2.0@aar'
+    implementation 'com.daimajia.androidanimations:library:2.2@aar'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.github.florent37:arclayout:1.0.3'
+    implementation 'com.flaviofaria:kenburnsview:1.0.7'
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+    implementation 'com.github.moondroid.coverflow:library:1.0'
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+    implementation 'com.github.clans:fab:1.6.4'
+    implementation 'cn.pedant.sweetalert:library:1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+apply plugin: 'com.google.gms.google-services'
