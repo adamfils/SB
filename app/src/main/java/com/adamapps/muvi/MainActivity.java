@@ -1,4 +1,4 @@
-package com.adamapps.toxic;
+package com.adamapps.muvi;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -31,7 +30,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Observable;
 
 public class MainActivity extends AppCompatActivity {
 

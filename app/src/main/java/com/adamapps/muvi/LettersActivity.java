@@ -1,4 +1,4 @@
-package com.adamapps.toxic;
+package com.adamapps.muvi;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -6,19 +6,15 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.google.firebase.database.FirebaseDatabase;
 import com.ldoublem.loadingviewlib.view.LVBlock;
 
 import org.jsoup.Jsoup;
@@ -28,7 +24,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 public class LettersActivity extends AppCompatActivity {

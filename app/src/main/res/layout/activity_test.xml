@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.adamapps.toxic.TestActivity">
+    tools:context="com.adamapps.muvi.TestActivity">
     <include
         android:id="@+id/tool"
         layout="@layout/toolbar"/>

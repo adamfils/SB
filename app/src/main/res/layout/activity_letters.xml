@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#c0c0c0"
-    tools:context="com.adamapps.toxic.LettersActivity">
+    tools:context="com.adamapps.muvi.LettersActivity">
 
     <include
         layout="@layout/toolbar"

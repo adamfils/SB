@@ -1,4 +1,4 @@
-package com.adamapps.toxic;
+package com.adamapps.muvi;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;

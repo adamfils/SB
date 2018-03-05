@@ -1,4 +1,4 @@
-package com.adamapps.toxic;
+package com.adamapps.muvi;
 
 import org.junit.Test;
 

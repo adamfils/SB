@@ -1,4 +1,4 @@
-package com.adamapps.toxic;
+package com.adamapps.muvi;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

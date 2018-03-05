@@ -1,42 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.adamapps.toxic">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.adamapps.muvi">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
-        android:name=".App.CacheApp"
+        android:name="com.adamapps.muvi.App.CacheApp"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:largeHeap="true"
+        tools:replace="android:icon"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
-        <activity android:name=".LettersActivity" />
-        <activity android:name=".LetterDetail" />
-        <activity android:name=".SeasonsActivity" />
-        <activity android:name=".SeasonDetail" />
+        <activity android:name="com.adamapps.muvi.MainActivity" />
+        <activity android:name="com.adamapps.muvi.LettersActivity" />
+        <activity android:name="com.adamapps.muvi.LetterDetail" />
+        <activity android:name="com.adamapps.muvi.SeasonsActivity" />
+        <activity android:name="com.adamapps.muvi.SeasonDetail" />
         <activity
-            android:name=".VideoPlayer"
+            android:name="com.adamapps.muvi.VideoPlayer"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize" />
-        <activity android:name=".TestActivity" />
-        <activity android:name=".FeaturedMovies" />
-        <activity android:name=".Welcome">
+        <activity android:name="com.adamapps.muvi.TestActivity" />
+        <activity android:name="com.adamapps.muvi.FeaturedMovies" />
+        <activity android:name="com.adamapps.muvi.Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Search" />
-        <activity android:name=".SeasonActivityTv4" />
-        <activity android:name=".SeasonDetail4Tv" />
-        <activity android:name=".WebPlayer" />
-        <activity android:name=".MovieList" />
-        <activity android:name=".SearchMovie"></activity>
+        <activity android:name="com.adamapps.muvi.Search" />
+        <activity android:name="com.adamapps.muvi.SeasonActivityTv4" />
+        <activity android:name="com.adamapps.muvi.SeasonDetail4Tv" />
+        <activity android:name="com.adamapps.muvi.WebPlayer" />
+        <activity android:name="com.adamapps.muvi.MovieList" />
+        <activity android:name="com.adamapps.muvi.SearchMovie"></activity>
     </application>
 
 </manifest>

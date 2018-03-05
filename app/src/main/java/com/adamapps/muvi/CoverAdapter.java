@@ -1,4 +1,4 @@
-package com.adamapps.toxic;
+package com.adamapps.muvi;
 
 import android.view.View;
 import android.view.ViewGroup;

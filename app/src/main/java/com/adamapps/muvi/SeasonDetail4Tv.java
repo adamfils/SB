@@ -1,8 +1,9 @@
-package com.adamapps.toxic;
+package com.adamapps.muvi;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -12,14 +13,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.ldoublem.loadingviewlib.view.LVBlock;
-import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,41 +29,34 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class SeasonActivityTv4 extends AppCompatActivity {
+public class SeasonDetail4Tv extends AppCompatActivity {
 
     private Document doc;
     String url = null;
     String tit = null;
-    String descWord = null;
-    String imageText = null;
     String tag = null;
-    Elements firstLinks;
+    Elements firstUl, firstLinks, nextLink;
     String LinksQuery = "div.data a";
+    String NextQuery = "div.page_nav a";
     RecyclerView categoryList;
     ArrayList<String> titlesArray = new ArrayList<>();
     ArrayList<String> linksArray = new ArrayList<>();
+    ArrayList<String> nextArray = new ArrayList<>();
+    FloatingActionButton nextButton;
     LVBlock lvBlock;
     String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
     Random random;
-    KenBurnsView imageView;
-    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_season_tv4);
-
-        random = new Random();
-
+        setContentView(R.layout.activity_season_detail4_tv);
         lvBlock = (LVBlock) findViewById(R.id.block);
-        imageView = (KenBurnsView) findViewById(R.id.movie_poster);
-        textView = (TextView) findViewById(R.id.movie_desc);
+        random = new Random();
 
         Intent i = getIntent();
         url = i.getStringExtra("link");
         tit = i.getStringExtra("word");
-        descWord = i.getStringExtra("desc");
-        imageText = i.getStringExtra("image");
         tag = i.getStringExtra("tag");
 
         android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
@@ -76,17 +68,12 @@ public class SeasonActivityTv4 extends AppCompatActivity {
         toolbarr.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbarr);
 
-        categoryList = (RecyclerView) findViewById(R.id.seasonList);
+
+        categoryList = (RecyclerView) findViewById(R.id.seasonDetail);
         new MyTask().execute();
         //categoryList.setLayoutManager(new GridLayoutManager(this,4));
+        nextButton = (FloatingActionButton) findViewById(R.id.next_btn);
         categoryList.setLayoutManager(new LinearLayoutManager(this));
-        if (imageText != null) {
-            Picasso.with(this).load(imageText).into(imageView);
-        }
-        if (descWord != null) {
-            textView.setText(descWord);
-
-        }
     }
 
     private class MyTask extends AsyncTask {
@@ -112,37 +99,57 @@ public class SeasonActivityTv4 extends AppCompatActivity {
                     linksArray.add(String.valueOf(links.attr("href")));
                 }
             }
-            //Toast.makeText(LetterDetailthis, "Size = "+linksArray.get(1), Toast.LENGTH_SHORT).show();
-            categoryList.setAdapter(new LettersAdapter(titlesArray, linksArray));
+            for (Element nextLinks : nextLink) {
+                if (!TextUtils.isEmpty(String.valueOf(nextLinks.text())) && nextLinks.text().contains("Next")) {
+                    nextArray.add(String.valueOf(nextLinks.attr("href")));
+                }
+            }
+            nextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (nextArray.size() > 0) {
+                        Intent i = new Intent(SeasonDetail4Tv.this, SeasonDetail4Tv.class);
+                        i.putExtra("link", nextArray.get(0));
+                        i.putExtra("word", tit);
+                        startActivity(i);
+
+                    } else {
+                        Toast.makeText(SeasonDetail4Tv.this, "Sorry That's All", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            categoryList.setAdapter(new SeasonDetailAdapter(titlesArray, linksArray));
         }
 
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
                 doc = Jsoup.connect(url).timeout(0).get();
+                //firstUl = doc.select(Query);
                 firstLinks = doc.select(LinksQuery);
+                nextLink = doc.select(NextQuery);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return firstLinks;
+            return firstUl;
         }
 
     }
 
-    private class LettersAdapter extends RecyclerView.Adapter<SeasonHolderHolder> {
+    private class SeasonDetailAdapter extends RecyclerView.Adapter<SeasonHolderHolder> {
 
         ArrayList<String> words = new ArrayList<>();
         ArrayList<String> links = new ArrayList<>();
 
-        public LettersAdapter(ArrayList<String> words, ArrayList<String> links) {
+        public SeasonDetailAdapter(ArrayList<String> words, ArrayList<String> links) {
             this.words = words;
             this.links = links;
         }
 
         @Override
         public SeasonHolderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(SeasonActivityTv4.this).inflate(R.layout.letters_layout, parent, false);
+            View v = LayoutInflater.from(SeasonDetail4Tv.this).inflate(R.layout.letters_layout, parent, false);
             return new SeasonHolderHolder(v);
         }
 
@@ -158,18 +165,12 @@ public class SeasonActivityTv4 extends AppCompatActivity {
                 public void onClick(View v, int position, boolean isLongClick) {
                     YoYo.with(Techniques.RubberBand).duration(500).playOn(holder.mView);
 
+                    Intent i = new Intent(SeasonDetail4Tv.this, VideoPlayer.class);
+                    i.putExtra("link", links.get(position));
+                    i.putExtra("word", words.get(position));
                     if ((tag != null && tag.equals("tv4mobile"))) {
-                        Intent i = new Intent(SeasonActivityTv4.this, SeasonDetail4Tv.class);
                         i.putExtra("tag", tag);
-                        i.putExtra("link", String.valueOf(links.get(position)));
-                        i.putExtra("word", String.valueOf(words.get(position)));
-                        startActivity(i);
-                        return;
                     }
-                    Intent i = new Intent(SeasonActivityTv4.this, SeasonDetail.class);
-                    i.putExtra("link", String.valueOf(links.get(position)));
-                    i.putExtra("word", String.valueOf(words.get(position)));
-
                     startActivity(i);
                 }
             });
@@ -187,14 +188,12 @@ public class SeasonActivityTv4 extends AppCompatActivity {
         View mView;
         AdamClickListener adamClickListener;
         CardView cardView;
-        ImageView imageView;
 
         public SeasonHolderHolder(View itemView) {
             super(itemView);
             mView = itemView;
             text = (TextView) itemView.findViewById(R.id.letterText);
             cardView = (CardView) itemView.findViewById(R.id.card);
-            imageView = itemView.findViewById(R.id.movie_poster);
             text.setSelected(true);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
@@ -215,5 +214,6 @@ public class SeasonActivityTv4 extends AppCompatActivity {
             return true;
         }
     }
+
 
 }

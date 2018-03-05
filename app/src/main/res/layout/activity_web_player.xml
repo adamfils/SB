@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.adamapps.toxic.WebPlayer">
+    tools:context="com.adamapps.muvi.WebPlayer">
     <WebView
         android:id="@+id/webplayer"
         android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.adamapps.toxic.App;
+package com.adamapps.muvi.App;
 
 import android.app.Application;
 

@@ -1,4 +1,4 @@
-package com.adamapps.toxic;
+package com.adamapps.muvi;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
