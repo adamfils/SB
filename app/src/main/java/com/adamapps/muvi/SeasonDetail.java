@@ -37,6 +37,7 @@ public class SeasonDetail extends AppCompatActivity {
     String url = null;
     String tit = null;
     String key = null,image = null;
+    String tag = null;
     Elements firstUl, firstLinks, nextLink, thumbLink;
     String Query = "li";
     String LinksQuery = "li a";
@@ -66,6 +67,7 @@ public class SeasonDetail extends AppCompatActivity {
         tit = i.getStringExtra("word");
         key = i.getStringExtra("key");
         image = i.getStringExtra("images");
+        tag = i.getStringExtra("tag");
 
         android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         if (tit != null) {
@@ -134,10 +136,12 @@ public class SeasonDetail extends AppCompatActivity {
                             String value = "https://toxicunrated.com" + String.valueOf(nextArray.get(0));
                             i.putExtra("link", value);
                             i.putExtra("word", tit);
+                            i.putExtra("tag",tag);
                         } else {
                             String value = "https://toxicwap.com" + String.valueOf(nextArray.get(0));
                             i.putExtra("link", value);
                             i.putExtra("word", tit);
+                            i.putExtra("tag",tag);
                         }
                         startActivity(i);
 
@@ -201,6 +205,7 @@ public class SeasonDetail extends AppCompatActivity {
                         i.putExtra("link", value);
                         i.putExtra("word", words.get(position));
                         i.putExtra("key", key);
+                        i.putExtra("tag", tag);
                         i.putExtra("season", tit);
                         i.putExtra("thumb", image);
                     } else {
@@ -209,6 +214,7 @@ public class SeasonDetail extends AppCompatActivity {
                         i.putExtra("word", words.get(position));
                         i.putExtra("key", key);
                         i.putExtra("season", tit);
+                        i.putExtra("tag", tag);
                         i.putExtra("thumb", image);
                     }
                     startActivity(i);

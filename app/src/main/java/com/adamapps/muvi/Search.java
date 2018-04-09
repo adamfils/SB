@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -46,7 +50,9 @@ public class Search extends AppCompatActivity {
     ArrayList<String> linkSearch = new ArrayList<>();
     ArrayList<String> ratingSearch = new ArrayList<>();
     ArrayList<String> titleSearch = new ArrayList<>();
-    ArrayList<String> links = new ArrayList<>();
+    FloatingActionButton moviesBtn, recentBtn, profileBtn;
+    FloatingActionMenu floatMenu;
+    private ArrayList<String> tagSearch = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,19 +60,50 @@ public class Search extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
-        showList = (RecyclerView) findViewById(R.id.showList);
+        showList = findViewById(R.id.showList);
         showList.setNestedScrollingEnabled(false);
         reference = FirebaseDatabase.getInstance().getReference().child("Media");
-        //query = reference;
 
-        searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        moviesBtn = findViewById(R.id.movies_btn);
+        recentBtn = findViewById(R.id.recent_btn);
+        profileBtn = findViewById(R.id.profile_btn);
+        floatMenu = findViewById(R.id.fb_menu);
+
+        searchView = findViewById(R.id.search_view);
 
         queryCall(reference);
+
+        recentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                floatMenu.close(true);
+                startActivity(new Intent(getApplicationContext(), Recent.class));
+            }
+        });
+        moviesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), SearchMovie.class));
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                floatMenu.close(true);
+                floatMenu.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                floatMenu.setVisibility(View.VISIBLE);
+            }
+        });
 
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
@@ -74,7 +111,9 @@ public class Search extends AppCompatActivity {
                 //Do some magic
                 //query = reference.orderByChild("nameSearch").startAt(queryText.toLowerCase());
                 //queryCall(query);
-
+                if (searchView.isSearchOpen()) {
+                    floatMenu.close(true);
+                }
 
                 reference.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -89,9 +128,11 @@ public class Search extends AppCompatActivity {
                             if (ds.child("nameSearch").getValue(String.class).contains(queryText.toLowerCase())) {
                                 searchResults(ds.getKey());
                             }
+                            reference.keepSynced(true);
                         }
                         showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
                         showList.setAdapter(new SearchAdapter());
+                        reference.keepSynced(true);
 
 
                     }
@@ -108,6 +149,10 @@ public class Search extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(final String queryText) {
                 //Do some magic
+                if (searchView.isSearchOpen()) {
+                    floatMenu.close(true);
+                }
+
                 query = reference.orderByChild("nameSearch").startAt(queryText.toLowerCase());
                 queryCall(query);
                 return true;
@@ -180,6 +225,19 @@ public class Search extends AppCompatActivity {
 
             }
         });
+        newRef.child("tag").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(String.class) != null) {
+                    tagSearch.add(dataSnapshot.getValue(String.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         titleSearch.add(childNode);
 
     }
@@ -208,6 +266,8 @@ public class Search extends AppCompatActivity {
                         i.putExtra("desc", descSearch.get(position));
                         i.putExtra("word", titleSearch.get(position));
                         i.putExtra("image", imageSearch.get(position));
+                        i.putExtra("tag", tagSearch.get(position));
+                        floatMenu.close(true);
                         startActivity(i);
                     }
                 });
@@ -217,6 +277,7 @@ public class Search extends AppCompatActivity {
                 if (titleSearch.get(position).equals("WWE")) {
                     wweArray.add(linkSearch.get(position));
                 }*/
+                reference.keepSynced(true);
 
             }
         }
@@ -262,6 +323,7 @@ public class Search extends AppCompatActivity {
                             if (model.getImage() != null) {
                                 i.putExtra("image", model.getImage());
                             }
+                            floatMenu.close(true);
                             startActivity(i);
                             return;
                         }
@@ -275,6 +337,7 @@ public class Search extends AppCompatActivity {
                                 String value = "https://toxicwap.com" + String.valueOf(smackArray.get(position));
                                 i.putExtra("link", value);
                             }
+                            floatMenu.close(true);
                             startActivity(i);
                             return;
                         }
@@ -283,10 +346,26 @@ public class Search extends AppCompatActivity {
                             //String link = linksArray.get(pos);
                             Intent i = new Intent(Search.this, LetterDetail.class);
                             i.putExtra("link", model.getLink());
+                            floatMenu.close(true);
                             startActivity(i);
                             return;
                         }
-                        Intent i = new Intent(Search.this, SeasonsActivity.class);
+
+                        if (model.getTag() != null && model.getTag().equals("toxic")) {
+                            Intent i = new Intent(Search.this, SeasonsActivity.class);
+                            i.putExtra("link", model.getLink());
+                            i.putExtra("word", model.getTitle());
+                            i.putExtra("tag", model.getTag());
+                            if (model.getDesc() != null) {
+                                i.putExtra("desc", model.getDesc());
+                            }
+                            if (model.getImage() != null) {
+                                i.putExtra("image", model.getImage());
+                            }
+                            floatMenu.close(true);
+                            startActivity(i);
+                        }
+                        /*Intent i = new Intent(Search.this, SeasonsActivity.class);
                         i.putExtra("link", model.getLink());
                         i.putExtra("word", model.getTitle());
                         if (model.getDesc() != null) {
@@ -295,7 +374,8 @@ public class Search extends AppCompatActivity {
                         if (model.getImage() != null) {
                             i.putExtra("image", model.getImage());
                         }
-                        startActivity(i);
+                        floatMenu.close(true);
+                        startActivity(i);*/
 
                     }
                 });
@@ -303,6 +383,7 @@ public class Search extends AppCompatActivity {
         };
         showList.setLayoutManager(new GridLayoutManager(this, 2));
         showList.setAdapter(adapter);
+        text.keepSynced(true);
     }
 
 
@@ -312,7 +393,7 @@ public class Search extends AppCompatActivity {
         TextView rate, titleView;
         View mView;
 
-        public ShowHolder(View itemView) {
+        ShowHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.movie_poster);
             rate = itemView.findViewById(R.id.movie_rating);
@@ -321,8 +402,18 @@ public class Search extends AppCompatActivity {
             mView = itemView;
         }
 
-        void setImage(Context c, String image) {
-            Picasso.with(c).load(image).into(imageView);
+        void setImage(final Context c, final String image) {
+            Picasso.with(c).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(imageView, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError() {
+                    Picasso.with(c).load(image).into(imageView);
+                }
+            });
         }
 
         void setLink(String link) {

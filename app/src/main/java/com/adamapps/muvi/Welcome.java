@@ -25,12 +25,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final int RC_SIGN_INN = 9001;
     ImageView burnsView;
-    Button googleSignIn,skipBtn;
+    Button googleSignIn, skipBtn;
     FirebaseAuth auth;
     FirebaseAuth.AuthStateListener authStateListener;
     GoogleApiClient mGoogleApiClient;
@@ -39,8 +42,8 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        burnsView = (ImageView)findViewById(R.id.background);
-        AnimationDrawable animationDrawable = (AnimationDrawable)burnsView.getBackground();
+        burnsView = findViewById(R.id.background);
+        AnimationDrawable animationDrawable = (AnimationDrawable) burnsView.getBackground();
         animationDrawable.start();
 
         auth = FirebaseAuth.getInstance();
@@ -54,8 +57,8 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
                 }
             }
         };
-        googleSignIn = (Button)findViewById(R.id.google_sign_in);
-        skipBtn = (Button)findViewById(R.id.skip_btn);
+        googleSignIn = findViewById(R.id.google_sign_in);
+        skipBtn = findViewById(R.id.skip_btn);
         googleSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,6 +82,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -91,20 +95,32 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
             }
         }
     }
+
     public void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         auth.signInWithCredential(credential)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        Toast.makeText(Welcome.this, "Welcome Back " + auth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
-                        finish();
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        Toast.makeText(Welcome.this, "Welcome Back "
+                                + auth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("name", user.getDisplayName());
+                        //map.put("image", user.getPhotoUrl());
+                        map.put("image","https://api.adorable.io/avatars/285/"
+                                +user.getDisplayName().replace(" ","")+".png");
+                        map.put("email", user.getEmail());
+                        FirebaseDatabase.getInstance().getReference().child("User")
+                                .child(user.getUid()).updateChildren(map);
                         startActivity(new Intent(Welcome.this, Search.class));
+                        finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Welcome.this, "Failed " + e, Toast.LENGTH_SHORT).show();
+                Toast.makeText(Welcome.this, "Failed " + e.getCause(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -114,6 +130,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
     @Override
     protected void onStart() {
         super.onStart();

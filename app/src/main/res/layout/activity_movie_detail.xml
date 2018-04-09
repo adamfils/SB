@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#90000000"
+    tools:context="com.adamapps.muvi.MovieDetail">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.flaviofaria.kenburnsview.KenBurnsView
+            android:id="@+id/backdrop_movie"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:contentDescription="@string/backdrop"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pic_supergirl" />
+
+        <TextView
+            android:id="@+id/title_movie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/backdrop_movie"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="#fff"
+            android:textSize="25sp"
+            tools:text="Title" />
+
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_movie"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/movie_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textColor="#fff"
+                tools:text="2017" />
+
+            <TextView
+                android:id="@+id/movie_quality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textColor="#fff"
+                tools:text="HD" />
+
+            <TextView
+                android:id="@+id/movie_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textColor="#fff"
+                tools:text="PG" />
+
+            <TextView
+                android:id="@+id/movie_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textColor="#fff"
+                tools:text="98 min" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/movie_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linear"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:textAlignment="center"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            tools:text="Super Saves Metro City From Evil Treats
+        Super Saves Metro City From Evil Treats " />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recommendationsList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/movie_desc"
+            android:layout_marginTop="20dp" />
+
+    </RelativeLayout>
+
+</ScrollView>

@@ -35,6 +35,7 @@ public class SeasonsActivity extends AppCompatActivity {
     private Document doc;
     String url = null;
     String tit = null;
+    String tag = null;
     String descWord = null;
     String imageText = null;
     Elements firstUl, firstLinks;
@@ -67,6 +68,7 @@ public class SeasonsActivity extends AppCompatActivity {
         tit = i.getStringExtra("word");
         descWord = i.getStringExtra("desc");
         imageText = i.getStringExtra("image");
+        tag = i.getStringExtra("tag");
 
         android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         if (tit != null) {
@@ -169,12 +171,14 @@ public class SeasonsActivity extends AppCompatActivity {
                         i.putExtra("link", value.replaceFirst("new", "old"));
                         i.putExtra("word", String.valueOf(words.get(position)));
                         i.putExtra("key", tit);
+                        i.putExtra("tag", tag);
                         i.putExtra("images",imageText);
                     } else {
                         String value = "https://toxicwap.com" + String.valueOf(links.get(position));
                         i.putExtra("link", value.replaceFirst("new", "old"));
                         i.putExtra("word", String.valueOf(words.get(position)));
                         i.putExtra("key", tit);
+                        i.putExtra("tag", tag);
                         i.putExtra("images",imageText);
                     }
                     startActivity(i);

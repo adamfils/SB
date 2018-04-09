@@ -76,7 +76,7 @@ public class MovieList extends AppCompatActivity {
         Intent i = getIntent();
         String indicator = i.getStringExtra("newUrl");
         if (indicator == null) {
-            url = "http://vexmovies.org/123movies";
+            url = "http://vexmovies.org/release-year/2018";
         } else {
             url = indicator;
         }
@@ -191,6 +191,7 @@ public class MovieList extends AppCompatActivity {
                     map.put("desc", describeArray.get(i));
                 if (i < yearArray.size())
                     map.put("year", String.valueOf(yearArray.get(i)));
+                map.put("tag","vex");
                 /*FirebaseDatabase.getInstance().getReference().child("Movies")
                         .child(titlesArray.get(i).replaceAll("[^a-zA-Z0-9]"," ")).updateChildren(map);*/
                 FirebaseDatabase.getInstance().getReference().child("Movies")

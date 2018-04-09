@@ -9,6 +9,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -38,6 +40,8 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui:0.6.1'
     implementation 'com.google.android.gms:play-services-auth:11.0.0'
 
+    //Circular ImageView
+    compile 'com.mikhaellopez:circularimageview:3.0.2'
     //implementation 'com.google.firebase:firebase-ads:11.8.0'
     //implementation 'com.google.firebase:firebase-core:11.8.0'
     //implementation 'com.google.firebase:firebase-database:11.8.0'
@@ -62,6 +66,12 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+
+
+
+
+
 
 
 

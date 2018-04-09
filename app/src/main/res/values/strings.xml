@@ -2,4 +2,6 @@
     <string name="app_name">MuVi</string>
 
     <string name="test_ad">ca-app-pub-3940256099942544/5224354917</string>
+    <string name="logo">Logo</string>
+    <string name="backdrop">Backdrop</string>
 </resources>
