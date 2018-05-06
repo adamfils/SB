@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.TvShowModels;
 
 /**
  * Created by chris on 2/1/2018.

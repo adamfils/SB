@@ -1,8 +1,9 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.TvShow;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +17,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.adamapps.muvi.Tests.LetterDetail;
+import com.adamapps.muvi.R;
+import com.adamapps.muvi.User.Recent;
+import com.adamapps.muvi.Movie.SearchMovie;
+import com.adamapps.muvi.TvShowModels.ShowModel;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -53,12 +59,27 @@ public class Search extends AppCompatActivity {
     FloatingActionButton moviesBtn, recentBtn, profileBtn;
     FloatingActionMenu floatMenu;
     private ArrayList<String> tagSearch = new ArrayList<>();
+    DatabaseReference updateRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        updateRef = FirebaseDatabase.getInstance().getReference("lock/beta/close");
+        updateRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue(Boolean.class)){
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
@@ -244,14 +265,15 @@ public class Search extends AppCompatActivity {
 
     public class SearchAdapter extends RecyclerView.Adapter<ShowHolder> {
 
+        @NonNull
         @Override
-        public ShowHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ShowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.letter_detail_layout, parent, false);
             return new ShowHolder(v);
         }
 
         @Override
-        public void onBindViewHolder(final ShowHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull final ShowHolder holder, final int position) {
             if (!titleSearch.get(position).equals("Next Page") && !titleSearch.get(position).equals("Next")) {
                 holder.setImage(Search.this, imageSearch.get(position));
                 holder.setTitle(titleSearch.get(position));
@@ -271,12 +293,7 @@ public class Search extends AppCompatActivity {
                         startActivity(i);
                     }
                 });
-                /*if (titleSearch.get(position).equals("Smackdown")) {
-                    smackArray.add(linkSearch.get(position));
-                }
-                if (titleSearch.get(position).equals("WWE")) {
-                    wweArray.add(linkSearch.get(position));
-                }*/
+
                 reference.keepSynced(true);
 
             }

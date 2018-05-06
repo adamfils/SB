@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Toxic.iml" filepath="$PROJECT_DIR$/Toxic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Muvi.iml" filepath="$PROJECT_DIR$/Muvi.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

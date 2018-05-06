@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.UserModels;
 
 /**
  * Created by chris on 3/6/2018.

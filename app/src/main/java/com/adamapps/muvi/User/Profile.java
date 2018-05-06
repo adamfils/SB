@@ -1,7 +1,9 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.User;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.adamapps.muvi.R;
 
 public class Profile extends AppCompatActivity {
 

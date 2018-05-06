@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.Movie;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,8 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.adamapps.muvi.MovieModels.MovieModel;
+import com.adamapps.muvi.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;

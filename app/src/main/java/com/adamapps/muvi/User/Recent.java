@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.User;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.adamapps.muvi.R;
+import com.adamapps.muvi.UserModels.RecentModel;
+import com.adamapps.muvi.TvShow.VideoPlayer;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -43,7 +46,7 @@ public class Recent extends AppCompatActivity {
         recentList = (RecyclerView) findViewById(R.id.recent_list);
 
         FirebaseRecyclerAdapter<RecentModel, Recent.RecentHolder> adapter = new FirebaseRecyclerAdapter<RecentModel, Recent.RecentHolder>
-                (RecentModel.class, R.layout.letter_detail_layout, Recent.RecentHolder.class, recentRef) {
+                (RecentModel.class, R.layout.letter_detail_layout, Recent.RecentHolder.class, recentRef.limitToFirst(10)) {
 
             @Override
             protected void populateViewHolder(final Recent.RecentHolder holder, final RecentModel model, final int position) {
@@ -51,6 +54,7 @@ public class Recent extends AppCompatActivity {
 
                 holder.setImage(Recent.this, model.getThumbnail());
                 holder.setTitle(model.getEpisode());
+                holder.rate.setVisibility(View.GONE);
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override

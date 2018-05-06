@@ -16,36 +16,36 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name=".MainActivity" />
-        <activity android:name=".LettersActivity" />
-        <activity android:name=".LetterDetail" />
-        <activity android:name=".SeasonsActivity" />
-        <activity android:name=".SeasonDetail" />
+        <activity android:name=".Tests.MainActivity" />
+        <activity android:name=".Tests.LettersActivity" />
+        <activity android:name=".Tests.LetterDetail" />
+        <activity android:name=".TvShow.SeasonsActivity" />
+        <activity android:name=".TvShow.SeasonDetail" />
         <activity
-            android:name=".VideoPlayer"
+            android:name=".TvShow.VideoPlayer"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize" />
-        <activity android:name=".TestActivity" />
-        <activity android:name=".FeaturedMovies" />
-        <activity android:name=".Welcome" />
-        <activity android:name=".Search" />
-        <activity android:name=".SeasonActivityTv4" />
-        <activity android:name=".SeasonDetail4Tv" />
-        <activity android:name=".WebPlayer"
+        <activity android:name=".Tests.TestActivity" />
+        <activity android:name=".UserModels.FeaturedMovies" />
+        <activity android:name=".StartUp.Welcome" />
+        <activity android:name=".TvShow.Search" />
+        <activity android:name=".TvShow.SeasonActivityTv4" />
+        <activity android:name=".TvShow.SeasonDetail4Tv" />
+        <activity android:name=".Movie.WebPlayer"
             android:screenOrientation="landscape"/>
-        <activity android:name=".MovieList"></activity>
-        <activity android:name=".SearchMovie" />
-        <activity android:name=".Splash">
+        <activity android:name=".Movie.MovieList"></activity>
+        <activity android:name=".Movie.SearchMovie" />
+        <activity android:name=".StartUp.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Profile" />
-        <activity android:name=".Recent" />
-        <activity android:name=".TagShow"></activity>
-        <activity android:name=".HDMovie"></activity>
-        <activity android:name=".MovieDetail"></activity>
+        <activity android:name=".User.Profile" />
+        <activity android:name=".User.Recent" />
+        <activity android:name=".Tests.TagShow"></activity>
+        <activity android:name=".Movie.HDMovie"></activity>
+        <activity android:name=".Movie.MovieDetail"></activity>
     </application>
 
 </manifest>

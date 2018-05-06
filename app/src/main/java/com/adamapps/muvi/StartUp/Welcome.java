@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.StartUp;
 
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.adamapps.muvi.R;
+import com.adamapps.muvi.TvShow.Search;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.auth.api.Auth;

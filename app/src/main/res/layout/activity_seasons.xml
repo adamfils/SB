@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context="com.adamapps.muvi.SeasonsActivity">
+    tools:context="com.adamapps.muvi.TvShow.SeasonsActivity">
 
     <ScrollView
         android:layout_width="match_parent"

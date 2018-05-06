@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.Tests;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adamapps.muvi.AdamClickListener;
+import com.adamapps.muvi.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.ads.AdListener;

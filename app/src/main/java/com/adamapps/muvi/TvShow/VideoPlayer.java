@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.TvShow;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.adamapps.muvi.R;
 import com.afollestad.easyvideoplayer.EasyVideoCallback;
 import com.afollestad.easyvideoplayer.EasyVideoPlayer;
 import com.google.android.gms.ads.AdRequest;
@@ -30,7 +31,6 @@ import java.util.HashMap;
 public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdListener {
 
     EasyVideoPlayer videoPlayer;
-    private Document doc;
     String url = null;
     Elements firstLinks;
     Element first4Tv;
@@ -47,13 +47,13 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
         // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        MobileAds.initialize(this, getResources().getString(R.string.ad_app_id));
 
         // Use an activity context to get the rewarded video instance.
         mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
         mRewardedVideoAd.setRewardedVideoAdListener(this);
 
-        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+        mRewardedVideoAd.loadAd(getString(R.string.ad_video_unit_id),
                 new AdRequest.Builder().build());
 
         /*if (mRewardedVideoAd.isLoaded()) {
@@ -111,9 +111,9 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
                     } else {
                         Toast.makeText(VideoPlayer.this, "Nothing To Show", Toast.LENGTH_SHORT).show();
                     }
-                    /*if (mRewardedVideoAd.isLoaded()) {
+                    if (mRewardedVideoAd.isLoaded()) {
                         mRewardedVideoAd.show();
-                    }*/
+                    }
                     //Toast.makeText(VideoPlayer.this, "Prepared", Toast.LENGTH_SHORT).show();
                 }
 
@@ -240,9 +240,9 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
                     } else {
                         Toast.makeText(VideoPlayer.this, "Nothing To Show", Toast.LENGTH_SHORT).show();
                     }
-                    /*if (mRewardedVideoAd.isLoaded()) {
+                    if (mRewardedVideoAd.isLoaded()) {
                         mRewardedVideoAd.show();
-                    }*/
+                    }
                     //Toast.makeText(VideoPlayer.this, "Prepared", Toast.LENGTH_SHORT).show();
                 }
 
@@ -276,7 +276,7 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                doc = Jsoup.connect(url).get();
+                Document doc = Jsoup.connect(url).get();
                 if (tag != null && tag.contains("toxic")) {
                     firstLinks = doc.select(Query);
                 }
@@ -309,13 +309,18 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
     protected void onDestroy() {
         super.onDestroy();
         videoPlayer.release();
+
     }
 
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         //Toast.makeText(this, ""+videoPlayer.getCurrentPosition(), Toast.LENGTH_SHORT).show();
+        if(!videoPlayer.isPrepared()){
+            super.onBackPressed();
+            return;
+        }
+
         HashMap<String, Object> map = new HashMap<>();
         if (videoPlayer.getCurrentPosition() < videoPlayer.getDuration()) {
             map.put("time", (videoPlayer.getCurrentPosition()));
@@ -346,6 +351,9 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(key).updateChildren(map);
         }
+        super.onBackPressed();
     }
+
+
 
 }

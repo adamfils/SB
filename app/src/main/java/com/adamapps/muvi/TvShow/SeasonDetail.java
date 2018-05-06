@@ -1,13 +1,14 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.TvShow;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adamapps.muvi.AdamClickListener;
+import com.adamapps.muvi.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.ldoublem.loadingviewlib.view.LVBlock;
@@ -83,7 +86,7 @@ public class SeasonDetail extends AppCompatActivity {
         new MyTask().execute();
         //categoryList.setLayoutManager(new GridLayoutManager(this,4));
         nextButton = (FloatingActionButton) findViewById(R.id.next_btn);
-        categoryList.setLayoutManager(new LinearLayoutManager(this));
+        categoryList.setLayoutManager(new GridLayoutManager(this,2));
     }
 
     private class MyTask extends AsyncTask {
@@ -150,7 +153,6 @@ public class SeasonDetail extends AppCompatActivity {
                     }
                 }
             });
-            //Toast.makeText(LetterDetailthis, "Size = "+linksArray.get(1), Toast.LENGTH_SHORT).show();
             categoryList.setAdapter(new SeasonDetailAdapter(titlesArray, linksArray));
         }
 
@@ -176,24 +178,29 @@ public class SeasonDetail extends AppCompatActivity {
         ArrayList<String> words = new ArrayList<>();
         ArrayList<String> links = new ArrayList<>();
 
-        public SeasonDetailAdapter(ArrayList<String> words, ArrayList<String> links) {
+        SeasonDetailAdapter(ArrayList<String> words, ArrayList<String> links) {
             this.words = words;
             this.links = links;
         }
 
+        @NonNull
         @Override
-        public SeasonHolderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(SeasonDetail.this).inflate(R.layout.single_season_detail, parent, false);
+        public SeasonHolderHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(SeasonDetail.this).inflate(R.layout.test_episode_layout, parent, false);
             return new SeasonHolderHolder(v);
         }
 
         @Override
-        public void onBindViewHolder(final SeasonHolderHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final SeasonHolderHolder holder, int position) {
             if (titlesArray.get(position) != null) {
-                holder.text.setText(words.get(position));
-                Picasso.with(getApplicationContext()).load(thumbArray.get(position)).into(holder.thumbnailView);
+                //holder.text.setText(words.get(position).substring(0,String.valueOf(words.get(position)).length()-13));
+                //Picasso.with(getApplicationContext()).load(thumbArray.get(position)).into(holder.thumbnailView);
+
+                holder.showName.setText(words.get(position).substring(0,String.valueOf(words.get(position)).length()-14));
+                Picasso.with(getApplicationContext()).load(thumbArray.get(position)).into(holder.testImage);
                 int val = random.nextInt(colors.length);
-                holder.cardView.setCardBackgroundColor(Color.parseColor(colors[val]));
+                holder.testText.setText(String.valueOf(position+1));
+                //holder.cardView.setCardBackgroundColor(Color.parseColor(colors[val]));
             }
             holder.setAdamClickListener(new AdamClickListener() {
                 @Override
@@ -230,11 +237,11 @@ public class SeasonDetail extends AppCompatActivity {
 
     private class SeasonHolderHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        TextView text;
+        TextView text,testText,showName;
         View mView;
         AdamClickListener adamClickListener;
         CardView cardView;
-        ImageView thumbnailView;
+        ImageView thumbnailView,testImage;
 
         public SeasonHolderHolder(View itemView) {
             super(itemView);
@@ -242,7 +249,11 @@ public class SeasonDetail extends AppCompatActivity {
             text = (TextView) itemView.findViewById(R.id.letterText);
             cardView = (CardView) itemView.findViewById(R.id.card);
             thumbnailView = itemView.findViewById(R.id.thumbnail_video);
-            text.setSelected(true);
+            testImage = itemView.findViewById(R.id.test_image);
+            testText = itemView.findViewById(R.id.test_text);
+            showName = itemView.findViewById(R.id.show_name);
+            //text.setSelected(true);
+            showName.setSelected(true);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }

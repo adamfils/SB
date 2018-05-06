@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.TvShow;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.adamapps.muvi.AdamClickListener;
+import com.adamapps.muvi.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.flaviofaria.kenburnsview.KenBurnsView;
@@ -30,24 +32,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class SeasonsActivity extends AppCompatActivity {
+public class SeasonActivityTv4 extends AppCompatActivity {
 
     private Document doc;
     String url = null;
     String tit = null;
-    String tag = null;
     String descWord = null;
     String imageText = null;
-    Elements firstUl, firstLinks;
-    String Query = "li";
-    String LinksQuery = "li a";
+    String tag = null;
+    Elements firstLinks;
+    String LinksQuery = "div.data a";
     RecyclerView categoryList;
     ArrayList<String> titlesArray = new ArrayList<>();
     ArrayList<String> linksArray = new ArrayList<>();
     LVBlock lvBlock;
-    //String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
-    String[] colors = {"#D5D5D5", "#A8A5A3", "#E8E2DB"};
-
+    String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
     Random random;
     KenBurnsView imageView;
     TextView textView;
@@ -55,7 +54,7 @@ public class SeasonsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_seasons);
+        setContentView(R.layout.activity_season_tv4);
 
         random = new Random();
 
@@ -90,7 +89,6 @@ public class SeasonsActivity extends AppCompatActivity {
             textView.setText(descWord);
 
         }
-
     }
 
     private class MyTask extends AsyncTask {
@@ -106,18 +104,16 @@ public class SeasonsActivity extends AppCompatActivity {
         protected void onPostExecute(Object o) {
             lvBlock.stopAnim();
             lvBlock.setVisibility(View.GONE);
-            if (firstUl != null)
-                for (Element listItem : firstUl) {
-                    if (!TextUtils.isEmpty(String.valueOf(listItem.text()))) {
-                        titlesArray.add(String.valueOf(listItem.text()));
-                    }
+            for (Element listItem : firstLinks) {
+                if (!TextUtils.isEmpty(String.valueOf(listItem.text()))) {
+                    titlesArray.add(String.valueOf(listItem.text()));
                 }
-            if (firstLinks != null)
-                for (Element links : firstLinks) {
-                    if (!TextUtils.isEmpty(String.valueOf(links.text()))) {
-                        linksArray.add(String.valueOf(links.attr("href")));
-                    }
+            }
+            for (Element links : firstLinks) {
+                if (!TextUtils.isEmpty(String.valueOf(links.text()))) {
+                    linksArray.add(String.valueOf(links.attr("href")));
                 }
+            }
             //Toast.makeText(LetterDetailthis, "Size = "+linksArray.get(1), Toast.LENGTH_SHORT).show();
             categoryList.setAdapter(new LettersAdapter(titlesArray, linksArray));
         }
@@ -126,13 +122,12 @@ public class SeasonsActivity extends AppCompatActivity {
         protected Object doInBackground(Object[] objects) {
             try {
                 doc = Jsoup.connect(url).timeout(0).get();
-                firstUl = doc.select(Query);
                 firstLinks = doc.select(LinksQuery);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return firstUl;
+            return firstLinks;
         }
 
     }
@@ -149,7 +144,7 @@ public class SeasonsActivity extends AppCompatActivity {
 
         @Override
         public SeasonHolderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(SeasonsActivity.this).inflate(R.layout.letters_layout, parent, false);
+            View v = LayoutInflater.from(SeasonActivityTv4.this).inflate(R.layout.letters_layout, parent, false);
             return new SeasonHolderHolder(v);
         }
 
@@ -157,7 +152,6 @@ public class SeasonsActivity extends AppCompatActivity {
         public void onBindViewHolder(final SeasonHolderHolder holder, int position) {
             if (titlesArray.get(position) != null) {
                 holder.text.setText(words.get(position));
-                holder.text.setTextColor(Color.BLACK);
                 int val = random.nextInt(colors.length);
                 holder.cardView.setCardBackgroundColor(Color.parseColor(colors[val]));
             }
@@ -165,22 +159,19 @@ public class SeasonsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v, int position, boolean isLongClick) {
                     YoYo.with(Techniques.RubberBand).duration(500).playOn(holder.mView);
-                    Intent i = new Intent(SeasonsActivity.this, SeasonDetail.class);
-                    if (url.contains("toxicunrated")) {
-                        String value = "https://toxicunrated.com" + String.valueOf(links.get(position));
-                        i.putExtra("link", value.replaceFirst("new", "old"));
-                        i.putExtra("word", String.valueOf(words.get(position)));
-                        i.putExtra("key", tit);
+
+                    if ((tag != null && tag.equals("tv4mobile"))) {
+                        Intent i = new Intent(SeasonActivityTv4.this, SeasonDetail4Tv.class);
                         i.putExtra("tag", tag);
-                        i.putExtra("images",imageText);
-                    } else {
-                        String value = "https://toxicwap.com" + String.valueOf(links.get(position));
-                        i.putExtra("link", value.replaceFirst("new", "old"));
+                        i.putExtra("link", String.valueOf(links.get(position)));
                         i.putExtra("word", String.valueOf(words.get(position)));
-                        i.putExtra("key", tit);
-                        i.putExtra("tag", tag);
-                        i.putExtra("images",imageText);
+                        startActivity(i);
+                        return;
                     }
+                    Intent i = new Intent(SeasonActivityTv4.this, SeasonDetail.class);
+                    i.putExtra("link", String.valueOf(links.get(position)));
+                    i.putExtra("word", String.valueOf(words.get(position)));
+
                     startActivity(i);
                 }
             });
@@ -226,4 +217,5 @@ public class SeasonsActivity extends AppCompatActivity {
             return true;
         }
     }
+
 }

@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.Movie;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import com.adamapps.muvi.R;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -63,9 +65,6 @@ public class WebPlayer extends AppCompatActivity {
             webSetting.setJavaScriptEnabled(true);
             webView.loadUrl(videoUrls.attr("src"));
 
-            /*if (getIntent().getStringExtra("link") != null)
-                Toast.makeText(WebPlayer.this, "Success", Toast.LENGTH_SHORT).show();
-            Toast.makeText(WebPlayer.this, "" + videoUrls.attr("src"), Toast.LENGTH_SHORT).show();*/
 
         }
 

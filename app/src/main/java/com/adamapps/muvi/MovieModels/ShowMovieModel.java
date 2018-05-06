@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.muvi.MovieModels;
 
 /**
  * Created by chris on 2/3/2018.

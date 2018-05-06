@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#90000000"
-    tools:context="com.adamapps.muvi.MovieDetail">
+    tools:context="com.adamapps.muvi.Movie.MovieDetail">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,8 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:contentDescription="@string/backdrop"
-            android:scaleType="centerCrop"
-            android:src="@drawable/pic_supergirl" />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/title_movie"
