@@ -4,23 +4,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.adamapps.muvi.MovieModels.MovieModel;
 import com.adamapps.muvi.R;
+import com.adamapps.muvi.Tests.LetterDetail;
+import com.adamapps.muvi.TvShow.Search;
+import com.adamapps.muvi.TvShow.SeasonActivityTv4;
+import com.adamapps.muvi.TvShow.SeasonDetail;
+import com.adamapps.muvi.TvShow.SeasonsActivity;
+import com.adamapps.muvi.TvShowModels.ShowModel;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,6 +58,7 @@ public class SearchMovie extends AppCompatActivity {
     private ArrayList<String> imageArray = new ArrayList<>();
     Element imageElement;
     String imageQuery = "img.poster";
+    FirebaseRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +88,7 @@ public class SearchMovie extends AppCompatActivity {
                         Toast.makeText(SearchMovie.this, "Failed = " + ds.getKey(), Toast.LENGTH_SHORT).show();
                         new ImageTask(ds.getKey()).execute();
                     }*/
-                    movieRef.keepSynced(true);
+                    //movieRef.keepSynced(true);
                     //movieRef.child(ds.getKey()).child("title").setValue(ds.getKey().toLowerCase());
                     //Toast.makeText(SearchMovie.this, ""+ds.child("title").getValue(), Toast.LENGTH_SHORT).show();
                 }
@@ -88,39 +99,65 @@ public class SearchMovie extends AppCompatActivity {
 
             }
         });
-        FirebaseRecyclerAdapter<MovieModel, MovieHolder> adapter =
+
+        FirebaseRecyclerOptions<MovieModel> options =
+                new FirebaseRecyclerOptions.Builder<MovieModel>()
+                        .setQuery(movieRef, MovieModel.class)
+                        .build();
+
+        adapter = new FirebaseRecyclerAdapter<MovieModel, MovieHolder>(options) {
+            @NonNull
+            @Override
+            public MovieHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                // Create a new instance of the ViewHolder, in this case we are using a custom
+                // layout called R.layout.message for each item
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.letter_detail_layout, parent, false);
+                return new MovieHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull final MovieHolder holder, final int position, @NonNull final MovieModel model) {
+                // Bind the Chat object to the ChatHolder
+                // ...
+
+                movieRef.keepSynced(true);
+                //if (model.getYear().equals("2018")) {
+                holder.setImage(getApplicationContext(), model.getImage());
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        YoYo.with(Techniques.RubberBand).duration(500).playOn(view);
+                        //Toast.makeText(SearchMovie.this, "" + model.getTitle(), Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(SearchMovie.this, MovieDetail.class);
+                        i.putExtra("link", model.getLink());
+                        i.putExtra("word", model.getTitle());
+                        i.putExtra("tag", model.getTag());
+                        i.putExtra("year", model.getYear());
+                        i.putExtra("quality", model.getQuality());
+                        if (model.getDesc() != null) {
+                            i.putExtra("desc", model.getDesc());
+                        }
+                        if (model.getImage() != null) {
+                            i.putExtra("image", model.getImage());
+                        }
+                        startActivity(i);
+
+
+                    }
+                });
+
+            }
+        };
+        /*FirebaseRecyclerAdapter<MovieModel, MovieHolder> adapter =
                 new FirebaseRecyclerAdapter<MovieModel, MovieHolder>(MovieModel.class, R.layout.letter_detail_layout,
                         MovieHolder.class, movieRef) {
                     @Override
                     protected void populateViewHolder(final MovieHolder viewHolder, final MovieModel model, int position) {
-                        movieRef.keepSynced(true);
-                        if (Integer.parseInt(model.getYear()) >= 2018) {
-                            viewHolder.setImage(getApplicationContext(), model.getImage());
-                            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    YoYo.with(Techniques.RubberBand).duration(500).playOn(view);
-                                    //Toast.makeText(SearchMovie.this, "" + model.getTitle(), Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(SearchMovie.this, MovieDetail.class);
-                                    i.putExtra("link", model.getLink());
-                                    i.putExtra("word", model.getTitle());
-                                    i.putExtra("tag", model.getTag());
-                                    i.putExtra("year", model.getYear());
-                                    i.putExtra("quality", model.getQuality());
-                                    if (model.getDesc() != null) {
-                                        i.putExtra("desc", model.getDesc());
-                                    }
-                                    if (model.getImage() != null) {
-                                        i.putExtra("image", model.getImage());
-                                    }
-                                    startActivity(i);
 
-
-                                }
-                            });
-                        }
                     }
-                };
+                    //}
+                };*/
         movieList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
         movieList.setAdapter(adapter);
 
@@ -142,36 +179,62 @@ public class SearchMovie extends AppCompatActivity {
 
     private void queryCall(Query text) {
 
-        FirebaseRecyclerAdapter<MovieModel, SearchMovie.MovieHolder> adapter = new FirebaseRecyclerAdapter<MovieModel, MovieHolder>
+        FirebaseRecyclerOptions<MovieModel> options =
+                new FirebaseRecyclerOptions.Builder<MovieModel>()
+                        .setQuery(text, MovieModel.class)
+                        .build();
+
+        adapter = new FirebaseRecyclerAdapter<MovieModel, MovieHolder>(options) {
+            @NonNull
+            @Override
+            public MovieHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                // Create a new instance of the ViewHolder, in this case we are using a custom
+                // layout called R.layout.message for each item
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.letter_detail_layout, parent, false);
+                return new MovieHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull final MovieHolder holder, final int position, @NonNull final MovieModel model) {
+                // Bind the Chat object to the ChatHolder
+                // ...
+
+                holder.setImage(SearchMovie.this, model.getImage());
+
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        YoYo.with(Techniques.RubberBand).duration(500).playOn(holder.mView);
+
+                        Intent i = new Intent(SearchMovie.this, MovieDetail.class);
+                        i.putExtra("link", model.getLink());
+                        i.putExtra("word", model.getTitle());
+                        i.putExtra("tag", model.getTag());
+                        i.putExtra("year", model.getYear());
+                        i.putExtra("quality", model.getQuality());
+                        if (model.getDesc() != null) {
+                            i.putExtra("desc", model.getDesc());
+                        }
+                        if (model.getImage() != null) {
+                            i.putExtra("image", model.getImage());
+                        }
+                        startActivity(i);
+
+                    }
+                });
+
+            }
+        };
+
+        /*FirebaseRecyclerAdapter<MovieModel, SearchMovie.MovieHolder> adapter = new FirebaseRecyclerAdapter<MovieModel, MovieHolder>
                 (MovieModel.class, R.layout.letter_detail_layout, SearchMovie.MovieHolder.class, text) {
 
             @Override
             protected void populateViewHolder(final SearchMovie.MovieHolder holder, final MovieModel model, final int position) {
-                    holder.setImage(SearchMovie.this, model.getImage());
 
-                    holder.mView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            YoYo.with(Techniques.RubberBand).duration(500).playOn(holder.mView);
-
-                            Intent i = new Intent(SearchMovie.this, MovieDetail.class);
-                            i.putExtra("link", model.getLink());
-                            i.putExtra("word", model.getTitle());
-                            i.putExtra("tag", model.getTag());
-                            i.putExtra("year", model.getYear());
-                            i.putExtra("quality", model.getQuality());
-                            if (model.getDesc() != null) {
-                                i.putExtra("desc", model.getDesc());
-                            }
-                            if (model.getImage() != null) {
-                                i.putExtra("image", model.getImage());
-                            }
-                            startActivity(i);
-
-                        }
-                    });
             }
-        };
+        };*/
         movieList.setLayoutManager(new GridLayoutManager(this, 2));
         movieList.setAdapter(adapter);
         text.keepSynced(true);
@@ -261,5 +324,17 @@ public class SearchMovie extends AppCompatActivity {
                 Picasso.with(c).load("google.com").into(imageView);
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 }

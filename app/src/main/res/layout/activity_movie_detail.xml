@@ -1,95 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#90000000"
+    android:background="@drawable/pic_supernatural"
     tools:context="com.adamapps.muvi.Movie.MovieDetail">
 
-    <RelativeLayout
+    <com.flaviofaria.kenburnsview.KenBurnsView
+        android:id="@+id/back_blur"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
-        <com.flaviofaria.kenburnsview.KenBurnsView
-            android:id="@+id/backdrop_movie"
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:onClick="CardClick"
+        app:cardCornerRadius="8dp">
+
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:contentDescription="@string/backdrop"
-            android:scaleType="centerCrop" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/title_movie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/backdrop_movie"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:textColor="#fff"
-            android:textSize="25sp"
-            tools:text="Title" />
-
-        <LinearLayout
-            android:id="@+id/linear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title_movie"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/movie_year"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textColor="#fff"
-                tools:text="2017" />
+                android:id="@+id/linear1">
+
+                <com.flaviofaria.kenburnsview.KenBurnsView
+                    android:id="@+id/backdrop_movie"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:contentDescription="@string/backdrop"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/videoplaceholder"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_play_circle"/>
+
+                <com.like.LikeButton
+                    android:id="@+id/favourite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:icon_type="star"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:padding="3dp"/>
+
+            </RelativeLayout>
+
 
             <TextView
-                android:id="@+id/movie_quality"
+                android:id="@+id/title_movie"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/linear1"
                 android:layout_marginLeft="10dp"
-                android:textColor="#fff"
-                tools:text="HD" />
+                android:layout_marginTop="10dp"
+                android:textColor="#000"
+                android:textSize="25sp"
+                tools:text="Title" />
 
-            <TextView
-                android:id="@+id/movie_rating"
-                android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textColor="#fff"
-                tools:text="PG" />
+                android:layout_below="@id/title_movie">
 
-            <TextView
-                android:id="@+id/movie_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textColor="#fff"
-                tools:text="98 min" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </LinearLayout>
+                    <TableLayout
+                        android:id="@+id/table1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true">
 
-        <TextView
-            android:id="@+id/movie_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/linear"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:textAlignment="center"
-            android:textColor="#fff"
-            android:textStyle="bold"
-            tools:text="Super Saves Metro City From Evil Treats
+                        <TableRow>
+
+                            <TextView
+                                android:id="@+id/movie_year"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:textColor="#000"
+                                tools:text="2017" />
+
+                            <TextView
+                                android:id="@+id/movie_quality"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:textColor="#000"
+                                tools:text="HD" />
+
+                            <TextView
+                                android:id="@+id/movie_rating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:textColor="#000"
+                                tools:text="PG" />
+                        </TableRow>
+
+                        <TableRow>
+
+                            <TextView
+                                android:id="@+id/movie_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:textColor="#000"
+                                tools:text="98 min" />
+
+                            <TextView
+                                android:id="@+id/movie_imdb"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:textColor="#000"
+                                tools:text="IMDB" />
+
+                        </TableRow>
+
+                    </TableLayout>
+
+                    <TextView
+                        android:id="@+id/movie_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/table1"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:textAlignment="center"
+                        android:textColor="#000"
+                        android:textStyle="bold"
+                        tools:text="Super Saves Metro City From Evil Treats
         Super Saves Metro City From Evil Treats " />
+                </RelativeLayout>
+            </ScrollView>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recommendationsList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/movie_desc"
-            android:layout_marginTop="20dp" />
+        </RelativeLayout>
 
-    </RelativeLayout>
-
-</ScrollView>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

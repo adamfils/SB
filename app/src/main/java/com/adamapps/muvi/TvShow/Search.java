@@ -2,31 +2,48 @@ package com.adamapps.muvi.TvShow;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.adamapps.muvi.Movie.HDMovie;
+import com.adamapps.muvi.StartUp.Welcome;
 import com.adamapps.muvi.Tests.LetterDetail;
 import com.adamapps.muvi.R;
+import com.adamapps.muvi.User.Favorite;
+import com.adamapps.muvi.User.Profile;
 import com.adamapps.muvi.User.Recent;
 import com.adamapps.muvi.Movie.SearchMovie;
 import com.adamapps.muvi.TvShowModels.ShowModel;
+import com.crashlytics.android.Crashlytics;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,18 +52,23 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import io.fabric.sdk.android.Fabric;
+
 public class Search extends AppCompatActivity {
+
+    InterstitialAd mInterstitialAd;
 
     MaterialSearchView searchView;
     RecyclerView showList;
     Query query;
     DatabaseReference reference;
-    ArrayList<String> linksArray = new ArrayList<>();
+
     ArrayList<String> smackArray = new ArrayList<>();
     ArrayList<String> wweArray = new ArrayList<>();
     ArrayList<String> results = new ArrayList<>();
@@ -60,18 +82,46 @@ public class Search extends AppCompatActivity {
     FloatingActionMenu floatMenu;
     private ArrayList<String> tagSearch = new ArrayList<>();
     DatabaseReference updateRef;
+    FirebaseRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        updateRef = FirebaseDatabase.getInstance().getReference("lock/beta/close");
+        Fabric.with(this, new Crashlytics());
+        Crashlytics.setUserIdentifier(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+        updateRef = FirebaseDatabase.getInstance().getReference("lock/v1/close");
         updateRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue(Boolean.class)){
+                AlertDialog alertDialog = null;
+                if (dataSnapshot.getValue(Boolean.class) != null && dataSnapshot.getValue(Boolean.class)) {
+                    //finish();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Search.this);
+                    View v = getLayoutInflater().inflate(R.layout.update_dialog_layout, null);
+                    Button update = v.findViewById(R.id.warning_update_btn);
+                    update.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.adamapps.muvi"));
+                            startActivity(intent);
+                            YoYo.with(Techniques.RubberBand).duration(400).playOn(v);
+                        }
+                    });
 
+                    builder.setView(v);
+                    alertDialog = builder.create();
+                    alertDialog.setCancelable(false);
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.show();
+                }
+                if (dataSnapshot.getValue(Boolean.class) != null && !dataSnapshot.getValue(Boolean.class)) {
+                    if (alertDialog != null && alertDialog.isShowing()) {
+                        alertDialog.dismiss();
+                    }
                 }
             }
 
@@ -81,8 +131,15 @@ public class Search extends AppCompatActivity {
             }
         });
 
+        MobileAds.initialize(this, "ca-app-pub-5077858194293069~3201484542");
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
+        toolbar.setTitle("Tv Shows");
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
@@ -95,21 +152,38 @@ public class Search extends AppCompatActivity {
         profileBtn = findViewById(R.id.profile_btn);
         floatMenu = findViewById(R.id.fb_menu);
 
+        if(!isTablet(Search.this)){
+            profileBtn.setButtonSize(FloatingActionButton.SIZE_MINI);
+            moviesBtn.setButtonSize(FloatingActionButton.SIZE_MINI);
+            recentBtn.setButtonSize(FloatingActionButton.SIZE_MINI);
+        }
+
         searchView = findViewById(R.id.search_view);
 
+
         queryCall(reference);
+
+        profileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floatMenu.close(true);
+                startActivity(new Intent(Search.this, Favorite.class));
+            }
+        });
+
 
         recentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 floatMenu.close(true);
-                startActivity(new Intent(getApplicationContext(), Recent.class));
+                startActivity(new Intent(Search.this, Recent.class));
             }
         });
         moviesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SearchMovie.class));
+                startActivity(new Intent(Search.this, HDMovie.class));
+                floatMenu.close(true);
             }
         });
 
@@ -123,6 +197,8 @@ public class Search extends AppCompatActivity {
             @Override
             public void onSearchViewClosed() {
                 floatMenu.setVisibility(View.VISIBLE);
+                queryCall(reference);
+                adapter.startListening();
             }
         });
 
@@ -145,17 +221,48 @@ public class Search extends AppCompatActivity {
                         descSearch.clear();
                         ratingSearch.clear();
                         titleSearch.clear();
+                        tagSearch.clear();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            if (ds.child("nameSearch").getValue(String.class).contains(queryText.toLowerCase())) {
+                            if (ds.child("nameSearch").getValue(String.class) != null && ds.child("nameSearch").getValue(String.class).contains(queryText.toLowerCase())) {
                                 searchResults(ds.getKey());
                             }
-                            reference.keepSynced(true);
+                            //reference.keepSynced(true);
                         }
-                        showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+                        if (isTablet(Search.this)) {
+                            Display getOrient = getWindowManager().getDefaultDisplay();
+                            int orientation = Configuration.ORIENTATION_UNDEFINED;
+                            if (getOrient.getWidth() == getOrient.getHeight()) {
+                                orientation = Configuration.ORIENTATION_SQUARE;
+
+                            } else {
+                                if (getOrient.getWidth() < getOrient.getHeight()) {
+                                    orientation = Configuration.ORIENTATION_PORTRAIT;
+                                    showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+                                } else {
+                                    orientation = Configuration.ORIENTATION_LANDSCAPE;
+                                    showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 4));
+                                }
+                            }
+
+
+                        } else {
+                            Display getOrient = getWindowManager().getDefaultDisplay();
+                            int orientation = Configuration.ORIENTATION_UNDEFINED;
+                            if (getOrient.getWidth() == getOrient.getHeight()) {
+                                orientation = Configuration.ORIENTATION_SQUARE;
+                            } else {
+                                if (getOrient.getWidth() < getOrient.getHeight()) {
+                                    orientation = Configuration.ORIENTATION_PORTRAIT;
+                                    showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+
+                                } else {
+                                    orientation = Configuration.ORIENTATION_LANDSCAPE;
+                                    showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+
+                                }
+                            }
+                        }
                         showList.setAdapter(new SearchAdapter());
-                        reference.keepSynced(true);
-
-
                     }
 
                     @Override
@@ -170,17 +277,20 @@ public class Search extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(final String queryText) {
                 //Do some magic
+
                 if (searchView.isSearchOpen()) {
                     floatMenu.close(true);
                 }
-
-                query = reference.orderByChild("nameSearch").startAt(queryText.toLowerCase());
-                queryCall(query);
+                if (queryText != null && !queryText.isEmpty()) {
+                    query = reference.orderByChild("nameSearch").startAt(queryText.toLowerCase());
+                    queryCall(query);
+                    adapter.startListening();
+                }
                 return true;
             }
         });
-        reference.keepSynced(true);
 
+        reference.keepSynced(true);
     }
 
     private void searchResults(String childNode) {
@@ -265,10 +375,9 @@ public class Search extends AppCompatActivity {
 
     public class SearchAdapter extends RecyclerView.Adapter<ShowHolder> {
 
-        @NonNull
         @Override
-        public ShowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.letter_detail_layout, parent, false);
+        public ShowHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(Search.this).inflate(R.layout.letter_detail_layout, parent, false);
             return new ShowHolder(v);
         }
 
@@ -283,14 +392,27 @@ public class Search extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         YoYo.with(Techniques.RubberBand).duration(500).playOn(holder.mView);
-                        Intent i = new Intent(getApplicationContext(), SeasonsActivity.class);
-                        i.putExtra("link", linkSearch.get(position));
-                        i.putExtra("desc", descSearch.get(position));
-                        i.putExtra("word", titleSearch.get(position));
-                        i.putExtra("image", imageSearch.get(position));
-                        i.putExtra("tag", tagSearch.get(position));
-                        floatMenu.close(true);
-                        startActivity(i);
+                        if (tagSearch.get(position).contains("tv4mobile")) {
+                            Intent i = new Intent(Search.this, SeasonActivityTv4.class);
+                            i.putExtra("link", linkSearch.get(position));
+                            i.putExtra("desc", descSearch.get(position));
+                            i.putExtra("word", titleSearch.get(position));
+                            i.putExtra("image", imageSearch.get(position));
+                            i.putExtra("tag", tagSearch.get(position));
+                            //Toast.makeText(Search.this, "Tag  Search = " + tagSearch.get(position), Toast.LENGTH_SHORT).show();
+                            floatMenu.close(true);
+                            startActivity(i);
+                        } else {
+                            Intent i = new Intent(Search.this, SeasonsActivity.class);
+                            i.putExtra("link", linkSearch.get(position));
+                            i.putExtra("desc", descSearch.get(position));
+                            i.putExtra("word", titleSearch.get(position));
+                            i.putExtra("image", imageSearch.get(position));
+                            i.putExtra("tag", tagSearch.get(position));
+                            //Toast.makeText(Search.this, "Tag  Search = " + tagSearch.get(position), Toast.LENGTH_SHORT).show();
+                            floatMenu.close(true);
+                            startActivity(i);
+                        }
                     }
                 });
 
@@ -307,12 +429,26 @@ public class Search extends AppCompatActivity {
 
     private void queryCall(Query text) {
 
-        FirebaseRecyclerAdapter<ShowModel, ShowHolder> adapter = new FirebaseRecyclerAdapter<ShowModel, ShowHolder>
-                (ShowModel.class, R.layout.letter_detail_layout, ShowHolder.class, text) {
+        FirebaseRecyclerOptions<ShowModel> options =
+                new FirebaseRecyclerOptions.Builder<ShowModel>()
+                        .setQuery(text, ShowModel.class)
+                        .build();
+
+        adapter = new FirebaseRecyclerAdapter<ShowModel, ShowHolder>(options) {
+            @NonNull
+            @Override
+            public ShowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                // Create a new instance of the ViewHolder, in this case we are using a custom
+                // layout called R.layout.message for each item
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.letter_detail_layout, parent, false);
+                return new ShowHolder(view);
+            }
 
             @Override
-            protected void populateViewHolder(final ShowHolder holder, final ShowModel model, final int position) {
-
+            protected void onBindViewHolder(@NonNull final ShowHolder holder, final int position, @NonNull final ShowModel model) {
+                // Bind the Chat object to the ChatHolder
+                // ...
                 if (!model.getTitle().equals("Next Page") && !model.getTitle().equals("Next")) {
                     holder.setImage(Search.this, model.getImage());
                     holder.setRating(model.getRating());
@@ -329,17 +465,19 @@ public class Search extends AppCompatActivity {
                     public void onClick(View view) {
                         YoYo.with(Techniques.RubberBand).duration(500).playOn(holder.mView);
 
-                        if (model.getTag() != null && model.getTag().equals("tv4mobile")) {
+                        if (model.getTag() != null && model.getTag().contains("tv4mobile")) {
                             Intent i = new Intent(Search.this, SeasonActivityTv4.class);
                             i.putExtra("link", model.getLink());
                             i.putExtra("word", model.getTitle());
                             i.putExtra("tag", model.getTag());
+                            Toast.makeText(Search.this, "Tv4M = " + model.getTag(), Toast.LENGTH_SHORT).show();
                             if (model.getDesc() != null) {
                                 i.putExtra("desc", model.getDesc());
                             }
                             if (model.getImage() != null) {
                                 i.putExtra("image", model.getImage());
                             }
+                            //Toast.makeText(Search.this, ""+tagSearch.get(0), Toast.LENGTH_SHORT).show();
                             floatMenu.close(true);
                             startActivity(i);
                             return;
@@ -359,8 +497,6 @@ public class Search extends AppCompatActivity {
                             return;
                         }
                         if (model.getTitle().equals("WWE")) {
-                            //int pos = titlesArray.indexOf("WWE");
-                            //String link = linksArray.get(pos);
                             Intent i = new Intent(Search.this, LetterDetail.class);
                             i.putExtra("link", model.getLink());
                             floatMenu.close(true);
@@ -373,34 +509,60 @@ public class Search extends AppCompatActivity {
                             i.putExtra("link", model.getLink());
                             i.putExtra("word", model.getTitle());
                             i.putExtra("tag", model.getTag());
+                            //Toast.makeText(Search.this, "Tox = "+model.getTag(), Toast.LENGTH_SHORT).show();
                             if (model.getDesc() != null) {
                                 i.putExtra("desc", model.getDesc());
                             }
                             if (model.getImage() != null) {
                                 i.putExtra("image", model.getImage());
                             }
+                            //Toast.makeText(Search.this, ""+tagSearch.get(0), Toast.LENGTH_SHORT).show();
+
                             floatMenu.close(true);
                             startActivity(i);
                         }
-                        /*Intent i = new Intent(Search.this, SeasonsActivity.class);
-                        i.putExtra("link", model.getLink());
-                        i.putExtra("word", model.getTitle());
-                        if (model.getDesc() != null) {
-                            i.putExtra("desc", model.getDesc());
-                        }
-                        if (model.getImage() != null) {
-                            i.putExtra("image", model.getImage());
-                        }
-                        floatMenu.close(true);
-                        startActivity(i);*/
-
                     }
                 });
             }
         };
-        showList.setLayoutManager(new GridLayoutManager(this, 2));
+
+        if (isTablet(Search.this)) {
+            Display getOrient = getWindowManager().getDefaultDisplay();
+            int orientation = Configuration.ORIENTATION_UNDEFINED;
+            if (getOrient.getWidth() == getOrient.getHeight()) {
+                orientation = Configuration.ORIENTATION_SQUARE;
+
+            } else {
+                if (getOrient.getWidth() < getOrient.getHeight()) {
+                    orientation = Configuration.ORIENTATION_PORTRAIT;
+                    showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+                } else {
+                    orientation = Configuration.ORIENTATION_LANDSCAPE;
+                    showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 4));
+                }
+            }
+
+
+        } else {
+            Display getOrient = getWindowManager().getDefaultDisplay();
+            int orientation = Configuration.ORIENTATION_UNDEFINED;
+            if (getOrient.getWidth() == getOrient.getHeight()) {
+                orientation = Configuration.ORIENTATION_SQUARE;
+            } else {
+                if (getOrient.getWidth() < getOrient.getHeight()) {
+                    orientation = Configuration.ORIENTATION_PORTRAIT;
+                    showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+
+                } else {
+                    orientation = Configuration.ORIENTATION_LANDSCAPE;
+                    showList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+
+                }
+            }
+        }
+
         showList.setAdapter(adapter);
-        text.keepSynced(true);
+        //text.keepSynced(true);
     }
 
 
@@ -420,22 +582,9 @@ public class Search extends AppCompatActivity {
         }
 
         void setImage(final Context c, final String image) {
-            Picasso.with(c).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(imageView, new Callback() {
-                @Override
-                public void onSuccess() {
-
-                }
-
-                @Override
-                public void onError() {
-                    Picasso.with(c).load(image).into(imageView);
-                }
-            });
+            Picasso.with(c).load(image).memoryPolicy(MemoryPolicy.NO_CACHE).into(imageView);
         }
 
-        void setLink(String link) {
-            //links.add(link);
-        }
 
         void setRating(String rating) {
             if (rating != null)
@@ -461,11 +610,54 @@ public class Search extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_logout){
+            FirebaseAuth.getInstance().signOut();
+            finish();
+            startActivity(new Intent(this, Welcome.class));
+        }
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         if (searchView.isSearchOpen()) {
             searchView.closeSearch();
         } else {
-            super.onBackPressed();
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+
+            } else {
+                super.onBackPressed();
+            }
+
         }
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                finish();
+            }
+        });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+        reference.keepSynced(true);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+
 }

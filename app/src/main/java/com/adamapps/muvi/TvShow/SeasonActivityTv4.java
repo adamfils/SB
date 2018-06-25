@@ -46,7 +46,8 @@ public class SeasonActivityTv4 extends AppCompatActivity {
     ArrayList<String> titlesArray = new ArrayList<>();
     ArrayList<String> linksArray = new ArrayList<>();
     LVBlock lvBlock;
-    String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
+    String[] colors = {"#D5D5D5", "#A8A5A3", "#E8E2DB"};
+    //String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
     Random random;
     KenBurnsView imageView;
     TextView textView;
@@ -58,9 +59,9 @@ public class SeasonActivityTv4 extends AppCompatActivity {
 
         random = new Random();
 
-        lvBlock = (LVBlock) findViewById(R.id.block);
-        imageView = (KenBurnsView) findViewById(R.id.movie_poster);
-        textView = (TextView) findViewById(R.id.movie_desc);
+        lvBlock = findViewById(R.id.block);
+        imageView = findViewById(R.id.movie_poster);
+        textView = findViewById(R.id.movie_desc);
 
         Intent i = getIntent();
         url = i.getStringExtra("link");
@@ -69,7 +70,7 @@ public class SeasonActivityTv4 extends AppCompatActivity {
         imageText = i.getStringExtra("image");
         tag = i.getStringExtra("tag");
 
-        android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if (tit != null) {
             toolbarr.setTitle(tit);
         } else {
@@ -78,7 +79,7 @@ public class SeasonActivityTv4 extends AppCompatActivity {
         toolbarr.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbarr);
 
-        categoryList = (RecyclerView) findViewById(R.id.seasonList);
+        categoryList = findViewById(R.id.seasonList);
         new MyTask().execute();
         //categoryList.setLayoutManager(new GridLayoutManager(this,4));
         categoryList.setLayoutManager(new LinearLayoutManager(this));
@@ -121,7 +122,7 @@ public class SeasonActivityTv4 extends AppCompatActivity {
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                doc = Jsoup.connect(url).timeout(0).get();
+                doc = Jsoup.connect(url+"?sort=a-z").timeout(0).get();
                 firstLinks = doc.select(LinksQuery);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -134,8 +135,8 @@ public class SeasonActivityTv4 extends AppCompatActivity {
 
     private class LettersAdapter extends RecyclerView.Adapter<SeasonHolderHolder> {
 
-        ArrayList<String> words = new ArrayList<>();
-        ArrayList<String> links = new ArrayList<>();
+        ArrayList<String> words ;
+        ArrayList<String> links ;
 
         public LettersAdapter(ArrayList<String> words, ArrayList<String> links) {
             this.words = words;
@@ -194,8 +195,8 @@ public class SeasonActivityTv4 extends AppCompatActivity {
         public SeasonHolderHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            text = (TextView) itemView.findViewById(R.id.letterText);
-            cardView = (CardView) itemView.findViewById(R.id.card);
+            text = itemView.findViewById(R.id.letterText);
+            cardView = itemView.findViewById(R.id.card);
             imageView = itemView.findViewById(R.id.movie_poster);
             text.setSelected(true);
             itemView.setOnClickListener(this);

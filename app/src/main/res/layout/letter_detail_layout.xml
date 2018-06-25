@@ -5,9 +5,9 @@
     android:id="@+id/card"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    app:cardElevation="8dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="5dp"
+    app:cardElevation="8dp"
     app:cardPreventCornerOverlap="true">
 
     <RelativeLayout
@@ -34,22 +34,24 @@
                 android:background="#50000000"
                 android:padding="5dp"
                 android:textColor="#fff"
+                android:visibility="invisible"
                 tool:text="9.0"
                 tool:textColor="#000" />
 
-            <com.like.LikeButton
-                android:id="@+id/favourite"
+            <TextView
+                android:id="@+id/episode_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                app:anim_scale_factor="2"
-                app:icon_size="20dp"
-                app:icon_type="star"
-                app:liked="false" />
+                android:text="Eps 21"
+                android:textStyle="bold"
+                android:textColor="#fff"
+                android:padding="8dp"
+                android:visibility="gone"
+                android:background="@drawable/custom_episode_bg"/>
 
         </RelativeLayout>
-
 
         <TextView
             android:id="@+id/letterText"
@@ -64,8 +66,8 @@
             android:textColor="#fff"
             android:textSize="20sp"
             android:textStyle="bold"
-            tool:text="Titile"
             android:visibility="gone"
+            tool:text="Titile"
             tool:textColor="#000" />
     </RelativeLayout>
 

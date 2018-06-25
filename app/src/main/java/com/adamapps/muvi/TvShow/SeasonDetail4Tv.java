@@ -1,6 +1,7 @@
 package com.adamapps.muvi.TvShow;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +21,10 @@ import com.adamapps.muvi.AdamClickListener;
 import com.adamapps.muvi.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.ldoublem.loadingviewlib.view.LVBlock;
 
 import org.jsoup.Jsoup;
@@ -33,7 +38,6 @@ import java.util.Random;
 
 public class SeasonDetail4Tv extends AppCompatActivity {
 
-    private Document doc;
     String url = null;
     String tit = null;
     String tag = null;
@@ -46,14 +50,16 @@ public class SeasonDetail4Tv extends AppCompatActivity {
     ArrayList<String> nextArray = new ArrayList<>();
     FloatingActionButton nextButton;
     LVBlock lvBlock;
-    String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
+    String[] colors = {"#D5D5D5", "#A8A5A3", "#E8E2DB"};
+    //String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
     Random random;
+    InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_season_detail4_tv);
-        lvBlock = (LVBlock) findViewById(R.id.block);
+        lvBlock = findViewById(R.id.block);
         random = new Random();
 
         Intent i = getIntent();
@@ -61,7 +67,69 @@ public class SeasonDetail4Tv extends AppCompatActivity {
         tit = i.getStringExtra("word");
         tag = i.getStringExtra("tag");
 
-        android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        MobileAds.initialize(this, getResources().getString(R.string.ad_app_id));
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.ad_interstitial_unit_id));
+
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        final SharedPreferences nextPref = getApplicationContext().getSharedPreferences("SDetail", MODE_PRIVATE);
+        SharedPreferences.Editor editor2 = nextPref.edit();
+
+
+        if (nextPref.getString("openTime", null) == null) {
+            editor2.putString("openTime", "1");
+            editor2.apply();
+        }
+        if (nextPref.getString("openTime", null) != null && Integer.parseInt(nextPref.getString("openTime", null)) >= 4) {
+            editor2.clear();
+            editor2.apply();
+        }
+        if (nextPref.getString("openTime", null) != null && Integer.parseInt(nextPref.getString("openTime", null)) <= 4) {
+            int added = Integer.parseInt(nextPref.getString("openTime", null)) + 1;
+            editor2.putString("openTime", String.valueOf(added));
+            editor2.apply();
+        }
+
+        mInterstitialAd.setAdListener(new AdListener(){
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                super.onAdLeftApplication();
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+            }
+
+            @Override
+            public void onAdLoaded() {
+                if(nextPref.getString("openTime", null) == null)
+                mInterstitialAd.show();
+            }
+
+            @Override
+            public void onAdClicked() {
+                super.onAdClicked();
+            }
+
+            @Override
+            public void onAdImpression() {
+                super.onAdImpression();
+            }
+        });
+
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if (tit != null) {
             toolbarr.setTitle(tit);
         } else {
@@ -71,10 +139,10 @@ public class SeasonDetail4Tv extends AppCompatActivity {
         setSupportActionBar(toolbarr);
 
 
-        categoryList = (RecyclerView) findViewById(R.id.seasonDetail);
+        categoryList = findViewById(R.id.seasonDetail);
         new MyTask().execute();
         //categoryList.setLayoutManager(new GridLayoutManager(this,4));
-        nextButton = (FloatingActionButton) findViewById(R.id.next_btn);
+        nextButton = findViewById(R.id.next_btn);
         categoryList.setLayoutManager(new LinearLayoutManager(this));
     }
 
@@ -126,7 +194,7 @@ public class SeasonDetail4Tv extends AppCompatActivity {
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                doc = Jsoup.connect(url).timeout(0).get();
+                Document doc = Jsoup.connect(url+"?sort=a-z").timeout(0).get();
                 //firstUl = doc.select(Query);
                 firstLinks = doc.select(LinksQuery);
                 nextLink = doc.select(NextQuery);
@@ -194,8 +262,8 @@ public class SeasonDetail4Tv extends AppCompatActivity {
         public SeasonHolderHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            text = (TextView) itemView.findViewById(R.id.letterText);
-            cardView = (CardView) itemView.findViewById(R.id.card);
+            text = itemView.findViewById(R.id.letterText);
+            cardView = itemView.findViewById(R.id.card);
             text.setSelected(true);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

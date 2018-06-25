@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,7 +21,15 @@ import com.adamapps.muvi.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.flaviofaria.kenburnsview.KenBurnsView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ldoublem.loadingviewlib.view.LVBlock;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
@@ -30,6 +39,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class SeasonsActivity extends AppCompatActivity {
@@ -49,6 +59,7 @@ public class SeasonsActivity extends AppCompatActivity {
     LVBlock lvBlock;
     //String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
     String[] colors = {"#D5D5D5", "#A8A5A3", "#E8E2DB"};
+    LikeButton favButton;
 
     Random random;
     KenBurnsView imageView;
@@ -64,6 +75,8 @@ public class SeasonsActivity extends AppCompatActivity {
         lvBlock = findViewById(R.id.block);
         imageView = findViewById(R.id.movie_poster);
         textView = findViewById(R.id.movie_desc);
+        favButton = findViewById(R.id.star_button);
+        favButton.setVisibility(View.GONE);
 
         Intent i = getIntent();
         url = i.getStringExtra("link");
@@ -71,6 +84,39 @@ public class SeasonsActivity extends AppCompatActivity {
         descWord = i.getStringExtra("desc");
         imageText = i.getStringExtra("image");
         tag = i.getStringExtra("tag");
+
+        final DatabaseReference favRef = FirebaseDatabase.getInstance().getReference().child("Favorite");
+
+        favRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(tit).child("title")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()){
+                            favButton.setLiked(true);
+                        }else{
+                            favButton.setLiked(false);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+        favButton.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                HashMap<String,Object> map = new HashMap<>();
+                map.put("title",tit);
+                favRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(tit).updateChildren(map);
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                favRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(tit).removeValue();
+            }
+        });
 
         android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if (tit != null) {
@@ -81,7 +127,7 @@ public class SeasonsActivity extends AppCompatActivity {
         toolbarr.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbarr);
 
-        categoryList = (RecyclerView) findViewById(R.id.seasonList);
+        categoryList = findViewById(R.id.seasonList);
         new MyTask().execute();
         //categoryList.setLayoutManager(new GridLayoutManager(this,4));
         categoryList.setLayoutManager(new LinearLayoutManager(this));
@@ -141,8 +187,8 @@ public class SeasonsActivity extends AppCompatActivity {
 
     private class LettersAdapter extends RecyclerView.Adapter<SeasonHolderHolder> {
 
-        ArrayList<String> words = new ArrayList<>();
-        ArrayList<String> links = new ArrayList<>();
+        ArrayList<String> words;
+        ArrayList<String> links;
 
         public LettersAdapter(ArrayList<String> words, ArrayList<String> links) {
             this.words = words;
@@ -205,8 +251,8 @@ public class SeasonsActivity extends AppCompatActivity {
         public SeasonHolderHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            text = (TextView) itemView.findViewById(R.id.letterText);
-            cardView = (CardView) itemView.findViewById(R.id.card);
+            text = itemView.findViewById(R.id.letterText);
+            cardView = itemView.findViewById(R.id.card);
             imageView = itemView.findViewById(R.id.movie_poster);
             text.setSelected(true);
             itemView.setOnClickListener(this);
@@ -228,4 +274,6 @@ public class SeasonsActivity extends AppCompatActivity {
             return true;
         }
     }
+
+
 }

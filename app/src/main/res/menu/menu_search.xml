@@ -7,4 +7,16 @@
         android:orderInCategory="100"
         android:title="Search"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_logout"
+        android:icon="@drawable/ic_action_action_search"
+        android:orderInCategory="200"
+        android:title="Logout"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_action_action_search"
+        android:orderInCategory="300"
+        android:title="Disclaimer"
+        app:showAsAction="never" />
 </menu>

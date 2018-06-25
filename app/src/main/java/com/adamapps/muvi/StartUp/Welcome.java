@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.adamapps.muvi.R;
 import com.adamapps.muvi.TvShow.Search;
+import com.adamapps.muvi.TvShow.Show;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.auth.api.Auth;
@@ -54,7 +55,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (user != null) {
-                    startActivity(new Intent(Welcome.this, Search.class));
+                    startActivity(new Intent(Welcome.this, Show.class));
                     finish();
                 }
             }
@@ -109,6 +110,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
                                 + auth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
 
                         HashMap<String, Object> map = new HashMap<>();
+                        assert user != null;
                         map.put("name", user.getDisplayName());
                         //map.put("image", user.getPhotoUrl());
                         map.put("image","https://api.adorable.io/avatars/285/"
@@ -116,7 +118,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
                         map.put("email", user.getEmail());
                         FirebaseDatabase.getInstance().getReference().child("User")
                                 .child(user.getUid()).updateChildren(map);
-                        startActivity(new Intent(Welcome.this, Search.class));
+                        startActivity(new Intent(Welcome.this, Show.class));
                         finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -130,7 +132,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(this, ""+connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

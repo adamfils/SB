@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context="com.adamapps.muvi.TvShow.SeasonsActivity">
 
     <ScrollView
@@ -15,15 +14,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <include
-                android:id="@+id/tip"
-                layout="@layout/toolbar" />
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary" />
 
             <com.github.florent37.arclayout.ArcLayout
                 android:id="@+id/arc"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_below="@+id/tip"
+                android:layout_below="@+id/toolbar"
                 app:arc_cropDirection="cropOutside"
                 app:arc_height="40dp"
                 app:arc_position="bottom">
@@ -37,6 +38,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop" />
+
+                    <com.like.LikeButton
+                        android:id="@+id/star_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        app:icon_size="25dp"
+                        app:icon_type="star" />
 
                     <TextView
                         android:id="@+id/movie_desc"

@@ -1,6 +1,7 @@
 package com.adamapps.muvi.TvShow;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -22,6 +23,14 @@ import com.adamapps.muvi.AdamClickListener;
 import com.adamapps.muvi.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ldoublem.loadingviewlib.view.LVBlock;
 import com.squareup.picasso.Picasso;
 
@@ -36,10 +45,9 @@ import java.util.Random;
 
 public class SeasonDetail extends AppCompatActivity {
 
-    private Document doc;
     String url = null;
     String tit = null;
-    String key = null,image = null;
+    String key = null, image = null;
     String tag = null;
     Elements firstUl, firstLinks, nextLink, thumbLink;
     String Query = "li";
@@ -53,15 +61,17 @@ public class SeasonDetail extends AppCompatActivity {
     ArrayList<String> thumbArray = new ArrayList<>();
     FloatingActionButton nextButton;
     LVBlock lvBlock;
-    //String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
-    String[] colors = {"#D5D5D5", "#A8A5A3", "#E8E2DB"};
+    //String[] colors = {"#D5D5D5", "#A8A5A3", "#E8E2DB"};
     Random random;
+    InterstitialAd mInterstitialAd;
+    String pin;
+    SharedPreferences nextPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_season_detail);
-        lvBlock = (LVBlock) findViewById(R.id.block);
+        lvBlock = findViewById(R.id.block);
 
         random = new Random();
 
@@ -71,8 +81,100 @@ public class SeasonDetail extends AppCompatActivity {
         key = i.getStringExtra("key");
         image = i.getStringExtra("images");
         tag = i.getStringExtra("tag");
+        pin = i.getStringExtra("pin");
 
-        android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+
+        nextPref = getApplicationContext().getSharedPreferences("SDetail", MODE_PRIVATE);
+        SharedPreferences.Editor editor2 = nextPref.edit();
+
+        FirebaseDatabase.getInstance().getReference().child("AdSelect").child("option")
+                .addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {
+                    if (dataSnapshot.getValue(Integer.class) == 1) {
+                        MobileAds.initialize(SeasonDetail.this, "ca-app-pub-5077858194293069~3201484542");
+
+                        mInterstitialAd = new InterstitialAd(SeasonDetail.this);
+                        mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                        AdListener();
+                    } else if (dataSnapshot.getValue(Integer.class) == 2) {
+                        MobileAds.initialize(SeasonDetail.this, "ca-app-pub-5134322630248880~5594892098");
+
+                        mInterstitialAd = new InterstitialAd(SeasonDetail.this);
+                        mInterstitialAd.setAdUnitId("ca-app-pub-5134322630248880/1464075399");
+                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                        AdListener();
+                    } else if (dataSnapshot.getValue(Integer.class) == 0) {
+                        FirebaseDatabase.getInstance().getReference().child("AdSelect").child("appID")
+                                .addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        MobileAds.initialize(SeasonDetail.this, dataSnapshot.getValue(String.class));
+
+                                        mInterstitialAd = new InterstitialAd(SeasonDetail.this);
+
+                                        FirebaseDatabase.getInstance().getReference().child("AdSelect")
+                                                .child("interstitialID").addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                mInterstitialAd.setAdUnitId(dataSnapshot.getValue(String.class));
+                                                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                                AdListener();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                    } else {
+                        MobileAds.initialize(SeasonDetail.this, "ca-app-pub-5077858194293069~3201484542");
+
+                        mInterstitialAd = new InterstitialAd(SeasonDetail.this);
+                        mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                        AdListener();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+        if (nextPref.getString("openTime", null) == null) {
+            editor2.putString("openTime", "1");
+            editor2.apply();
+        }
+        if (nextPref.getString("openTime", null) != null && Integer.parseInt(nextPref.getString("openTime", null)) >= 4) {
+            editor2.clear();
+            editor2.apply();
+        }
+        if (nextPref.getString("openTime", null) != null && Integer.parseInt(nextPref.getString("openTime", null)) <= 4) {
+            int added = Integer.parseInt(nextPref.getString("openTime", null)) + 1;
+            editor2.putString("openTime", String.valueOf(added));
+            editor2.apply();
+        }
+
+
+
+
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if (tit != null) {
             toolbarr.setTitle(tit);
         } else {
@@ -82,11 +184,51 @@ public class SeasonDetail extends AppCompatActivity {
         setSupportActionBar(toolbarr);
 
 
-        categoryList = (RecyclerView) findViewById(R.id.seasonDetail);
+        categoryList = findViewById(R.id.seasonDetail);
         new MyTask().execute();
         //categoryList.setLayoutManager(new GridLayoutManager(this,4));
-        nextButton = (FloatingActionButton) findViewById(R.id.next_btn);
-        categoryList.setLayoutManager(new GridLayoutManager(this,2));
+        nextButton = findViewById(R.id.next_btn);
+        categoryList.setLayoutManager(new GridLayoutManager(this, 2));
+    }
+
+    public void AdListener(){
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                super.onAdLeftApplication();
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+            }
+
+            @Override
+            public void onAdLoaded() {
+                if (nextPref.getString("openTime", null) == null)
+                    mInterstitialAd.show();
+            }
+
+            @Override
+            public void onAdClicked() {
+                super.onAdClicked();
+            }
+
+            @Override
+            public void onAdImpression() {
+                super.onAdImpression();
+            }
+        });
     }
 
     private class MyTask extends AsyncTask {
@@ -139,12 +281,14 @@ public class SeasonDetail extends AppCompatActivity {
                             String value = "https://toxicunrated.com" + String.valueOf(nextArray.get(0));
                             i.putExtra("link", value);
                             i.putExtra("word", tit);
-                            i.putExtra("tag",tag);
+                            i.putExtra("tag", tag);
+                            i.putExtra("pin", "adam");
                         } else {
                             String value = "https://toxicwap.com" + String.valueOf(nextArray.get(0));
                             i.putExtra("link", value);
                             i.putExtra("word", tit);
-                            i.putExtra("tag",tag);
+                            i.putExtra("tag", tag);
+                            i.putExtra("pin", "adam");
                         }
                         startActivity(i);
 
@@ -159,7 +303,7 @@ public class SeasonDetail extends AppCompatActivity {
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                doc = Jsoup.connect(url).timeout(0).get();
+                Document doc = Jsoup.connect(url).timeout(0).get();
                 firstUl = doc.select(Query);
                 firstLinks = doc.select(LinksQuery);
                 nextLink = doc.select(NextQuery);
@@ -175,8 +319,8 @@ public class SeasonDetail extends AppCompatActivity {
 
     private class SeasonDetailAdapter extends RecyclerView.Adapter<SeasonHolderHolder> {
 
-        ArrayList<String> words = new ArrayList<>();
-        ArrayList<String> links = new ArrayList<>();
+        ArrayList<String> words;
+        ArrayList<String> links;
 
         SeasonDetailAdapter(ArrayList<String> words, ArrayList<String> links) {
             this.words = words;
@@ -193,14 +337,10 @@ public class SeasonDetail extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull final SeasonHolderHolder holder, int position) {
             if (titlesArray.get(position) != null) {
-                //holder.text.setText(words.get(position).substring(0,String.valueOf(words.get(position)).length()-13));
-                //Picasso.with(getApplicationContext()).load(thumbArray.get(position)).into(holder.thumbnailView);
-
-                holder.showName.setText(words.get(position).substring(0,String.valueOf(words.get(position)).length()-14));
+                holder.showName.setText(words.get(position).substring(0, String.valueOf(words.get(position)).length() - 13));
                 Picasso.with(getApplicationContext()).load(thumbArray.get(position)).into(holder.testImage);
-                int val = random.nextInt(colors.length);
-                holder.testText.setText(String.valueOf(position+1));
-                //holder.cardView.setCardBackgroundColor(Color.parseColor(colors[val]));
+                //int val = random.nextInt(colors.length);
+                holder.testText.setText(String.valueOf(position + 1));
             }
             holder.setAdamClickListener(new AdamClickListener() {
                 @Override
@@ -215,6 +355,7 @@ public class SeasonDetail extends AppCompatActivity {
                         i.putExtra("tag", tag);
                         i.putExtra("season", tit);
                         i.putExtra("thumb", image);
+
                     } else {
                         String value = "https://toxicwap.com" + String.valueOf(links.get(position));
                         i.putExtra("link", value);
@@ -237,22 +378,21 @@ public class SeasonDetail extends AppCompatActivity {
 
     private class SeasonHolderHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        TextView text,testText,showName;
+        TextView text, testText, showName;
         View mView;
         AdamClickListener adamClickListener;
         CardView cardView;
-        ImageView thumbnailView,testImage;
+        ImageView thumbnailView, testImage;
 
-        public SeasonHolderHolder(View itemView) {
+        private SeasonHolderHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            text = (TextView) itemView.findViewById(R.id.letterText);
-            cardView = (CardView) itemView.findViewById(R.id.card);
+            text = itemView.findViewById(R.id.letterText);
+            cardView = itemView.findViewById(R.id.card);
             thumbnailView = itemView.findViewById(R.id.thumbnail_video);
             testImage = itemView.findViewById(R.id.test_image);
             testText = itemView.findViewById(R.id.test_text);
             showName = itemView.findViewById(R.id.show_name);
-            //text.setSelected(true);
             showName.setSelected(true);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

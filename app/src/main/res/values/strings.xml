@@ -5,7 +5,11 @@
 
     <string name="ad_app_id">ca-app-pub-5077858194293069~3201484542</string>
     <string name="ad_interstitial_unit_id">ca-app-pub-5077858194293069/7136860128</string>
+    <string name="appodeal_app_key">245b40bcd9ba7524ca562479b9f450b3905a6c3cbf687220</string>
     <string name="ad_video_unit_id">ca-app-pub-5077858194293069/8200910185</string>
     <string name="logo">Logo</string>
     <string name="backdrop">Backdrop</string>
+    <string name="update_text">This Beta Verision Needs To Be Updated</string>
+    <string name="update">Update</string>
+    <string name="adams_production">Adams Production</string>
 </resources>

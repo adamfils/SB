@@ -16,6 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
+        <service android:name=".Services.FirebaseService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity android:name=".Tests.MainActivity" />
         <activity android:name=".Tests.LettersActivity" />
         <activity android:name=".Tests.LetterDetail" />
@@ -30,9 +36,11 @@
         <activity android:name=".TvShow.Search" />
         <activity android:name=".TvShow.SeasonActivityTv4" />
         <activity android:name=".TvShow.SeasonDetail4Tv" />
-        <activity android:name=".Movie.WebPlayer"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".Movie.MovieList"></activity>
+        <activity android:name=".TvShow.Show" />
+        <activity
+            android:name=".Movie.WebPlayer"
+            android:screenOrientation="landscape" />
+        <activity android:name=".Movie.MovieList" />
         <activity android:name=".Movie.SearchMovie" />
         <activity android:name=".StartUp.Splash">
             <intent-filter>
@@ -43,9 +51,19 @@
         </activity>
         <activity android:name=".User.Profile" />
         <activity android:name=".User.Recent" />
-        <activity android:name=".Tests.TagShow"></activity>
-        <activity android:name=".Movie.HDMovie"></activity>
-        <activity android:name=".Movie.MovieDetail"></activity>
+        <activity android:name=".Tests.TagShow" />
+        <activity android:name=".Movie.HDMovie" />
+        <activity
+            android:name=".Movie.MovieDetail"
+            android:screenOrientation="portrait" />
+        <activity android:name=".Movie.SeeHDList" />
+        <activity android:name=".MovieDetailTest" />
+        <activity
+            android:name=".Movie.MovieWebView"
+            android:screenOrientation="landscape" />
+        <activity android:name=".User.Favorite" />
+        <activity android:name=".User.About" />
+        <activity android:name=".Tests.NewShows"></activity>
     </application>
 
 </manifest>

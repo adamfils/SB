@@ -1,23 +1,33 @@
 package com.adamapps.muvi.TvShow;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioFocusRequest;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.adamapps.muvi.Movie.MovieWebView;
 import com.adamapps.muvi.R;
 import com.afollestad.easyvideoplayer.EasyVideoCallback;
 import com.afollestad.easyvideoplayer.EasyVideoPlayer;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,7 +38,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdListener {
+import io.fabric.sdk.android.Fabric;
+
+public class VideoPlayer extends AppCompatActivity {
 
     EasyVideoPlayer videoPlayer;
     String url = null;
@@ -41,24 +53,105 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
     String key = null, season = null, thumb = null;
     ArrayList<String> linksArray = new ArrayList<>();
     private RewardedVideoAd mRewardedVideoAd;
+    AudioManager am;
+    InterstitialAd mInterstitialAd;
+    final static String unitID = "ca-app-pub-5134322630248880/8959422031";
+    final static String appID = "ca-app-pub-5134322630248880~5594892098";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
+        Fabric.with(this, new Crashlytics());
         // Initialize the Mobile Ads SDK.
         MobileAds.initialize(this, getResources().getString(R.string.ad_app_id));
 
         // Use an activity context to get the rewarded video instance.
-        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
-        mRewardedVideoAd.setRewardedVideoAdListener(this);
 
-        mRewardedVideoAd.loadAd(getString(R.string.ad_video_unit_id),
-                new AdRequest.Builder().build());
+        FirebaseDatabase.getInstance().getReference().child("AdSelect").child("option")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            if (dataSnapshot.getValue(Integer.class) == 1) {
+                                MobileAds.initialize(VideoPlayer.this, "ca-app-pub-5077858194293069~3201484542");
+
+                                MobileAds.initialize(VideoPlayer.this, "ca-app-pub-5077858194293069~3201484542");
+
+                                mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(VideoPlayer.this);
+
+                                mRewardedVideoAd.loadAd("ca-app-pub-5077858194293069/8200910185",
+                                        new AdRequest.Builder().build());
+                                AdListener();
+                            } else if (dataSnapshot.getValue(Integer.class) == 2) {
+                                MobileAds.initialize(VideoPlayer.this, appID);
+
+                                mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(VideoPlayer.this);
+
+                                mRewardedVideoAd.loadAd(unitID,
+                                        new AdRequest.Builder().build());
+                                AdListener();
+                            } else if (dataSnapshot.getValue(Integer.class) == 0) {
+                                FirebaseDatabase.getInstance().getReference().child("AdSelect").child("appID")
+                                        .addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                MobileAds.initialize(VideoPlayer.this, dataSnapshot.getValue(String.class));
+
+                                                mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(VideoPlayer.this);
+
+                                                FirebaseDatabase.getInstance().getReference().child("AdSelect")
+                                                        .child("videoID").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        mRewardedVideoAd.loadAd(dataSnapshot.getValue(String.class),
+                                                                new AdRequest.Builder().build());
+                                                        AdListener();
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                            } else {
+                                MobileAds.initialize(VideoPlayer.this, "ca-app-pub-5077858194293069~3201484542");
+
+                                mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(VideoPlayer.this);
+
+                                mRewardedVideoAd.loadAd("ca-app-pub-5077858194293069/8200910185",
+                                        new AdRequest.Builder().build());
+                                AdListener();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
         /*if (mRewardedVideoAd.isLoaded()) {
             mRewardedVideoAd.show();
         }*/
+
+        //MobileAds.initialize(this, getResources().getString(R.string.ad_app_id));
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.ad_interstitial_unit_id));
+
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         Intent i = getIntent();
         url = i.getStringExtra("link");
@@ -72,7 +165,7 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
         show = i.getStringExtra("show");
         duration = i.getStringExtra("duration");
 
-        android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if (tit != null) {
             toolbarr.setTitle(tit);
         } else {
@@ -81,7 +174,7 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
         toolbarr.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbarr);
 
-        videoPlayer = (EasyVideoPlayer) findViewById(R.id.player);
+        videoPlayer = findViewById(R.id.player);
         videoPlayer.setAutoFullscreen(true);
         // videoPlayer.disableControls();
         videoPlayer.setBottomLabelText(tit);
@@ -108,11 +201,18 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
                 public void onPrepared(EasyVideoPlayer player) {
                     if (type != null && type.equals("recent")) {
                         player.seekTo(Integer.parseInt(time));
-                    } else {
-                        Toast.makeText(VideoPlayer.this, "Nothing To Show", Toast.LENGTH_SHORT).show();
                     }
                     if (mRewardedVideoAd.isLoaded()) {
                         mRewardedVideoAd.show();
+                    }
+
+                    assert am != null;
+                    int result = am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+                    final Object mFocusLock = new Object();
+                    synchronized (mFocusLock) {
+                        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                            player.setAutoPlay(true);
+                        }
                     }
                     //Toast.makeText(VideoPlayer.this, "Prepared", Toast.LENGTH_SHORT).show();
                 }
@@ -124,7 +224,7 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
 
                 @Override
                 public void onError(EasyVideoPlayer player, Exception e) {
-
+                    Toast.makeText(VideoPlayer.this, ""+e.getCause(), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -147,52 +247,67 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
         }
         videoPlayer.setAutoPlay(true);
         videoPlayer.enableControls(true);
-
-
-    }
-
-    private void loadRewardedVideoAd() {
-        if (!mRewardedVideoAd.isLoaded()) {
-            mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
-                    new AdRequest.Builder().build());
+        if (videoPlayer.isPlaying()) {
+            int result = am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+            final Object mFocusLock = new Object();
+            synchronized (mFocusLock) {
+                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    videoPlayer.setAutoPlay(true);
+                }
+            }
         }
-    }
 
-    @Override
-    public void onRewardedVideoAdLoaded() {
-        //mRewardedVideoAd.show();
-        //Toast.makeText(this, "Rewarded", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onRewardedVideoAdOpened() {
 
     }
 
-    @Override
-    public void onRewardedVideoStarted() {
+    public void AdListener(){
+        mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
+            @Override
+            public void onRewardedVideoAdLoaded() {
 
+            }
+
+            @Override
+            public void onRewardedVideoAdOpened() {
+
+            }
+
+            @Override
+            public void onRewardedVideoStarted() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdClosed() {
+                videoPlayer.setAutoPlay(true);
+                videoPlayer.enableControls(true);
+            }
+
+            @Override
+            public void onRewarded(RewardItem rewardItem) {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdLeftApplication() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdFailedToLoad(int i) {
+                videoPlayer.setAutoPlay(true);
+                videoPlayer.enableControls(true);
+            }
+
+            @Override
+            public void onRewardedVideoCompleted() {
+
+            }
+        });
     }
 
-    @Override
-    public void onRewardedVideoAdClosed() {
-        //Toast.makeText(this, "You'll Watch Without Video Controls", Toast.LENGTH_LONG).show();
-    }
 
-    @Override
-    public void onRewarded(RewardItem rewardItem) {
 
-    }
-
-    @Override
-    public void onRewardedVideoAdLeftApplication() {
-    }
-
-    @Override
-    public void onRewardedVideoAdFailedToLoad(int i) {
-        videoPlayer.setAutoPlay(true);
-        videoPlayer.enableControls(true);
-    }
 
 
     private class MyTask extends AsyncTask {
@@ -237,8 +352,6 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
                 public void onPrepared(EasyVideoPlayer player) {
                     if (type != null && type.equals("recent")) {
                         player.seekTo(Integer.parseInt(time));
-                    } else {
-                        Toast.makeText(VideoPlayer.this, "Nothing To Show", Toast.LENGTH_SHORT).show();
                     }
                     if (mRewardedVideoAd.isLoaded()) {
                         mRewardedVideoAd.show();
@@ -301,6 +414,7 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
             videoPlayer.pause();
         }
         videoPlayer.setSaveEnabled(true);*/
+        //mInterstitialAd.loadAd(new AdRequest.Builder().build());
         videoPlayer.pause();
     }
 
@@ -310,22 +424,34 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
         super.onDestroy();
         videoPlayer.release();
 
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }
+    }
 
     @Override
     public void onBackPressed() {
         //Toast.makeText(this, ""+videoPlayer.getCurrentPosition(), Toast.LENGTH_SHORT).show();
-        if(!videoPlayer.isPrepared()){
+        if (!videoPlayer.isPrepared()) {
             super.onBackPressed();
             return;
         }
 
+
         HashMap<String, Object> map = new HashMap<>();
         if (videoPlayer.getCurrentPosition() < videoPlayer.getDuration()) {
-            map.put("time", (videoPlayer.getCurrentPosition()));
+            map.put("time", (videoPlayer.getCurrentPosition() - 3000));
         } else {
             map.put("time", (Long.parseLong("1000")));
+        }
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
         }
         if (key != null)
             map.put("show", key);
@@ -341,19 +467,19 @@ public class VideoPlayer extends AppCompatActivity implements RewardedVideoAdLis
             map.put("tag", tag);
         if (duration != null)
             map.put("duration", videoPlayer.getDuration());
-        
-        if (type != null && type.contains("recent")) {
+
+        if (show != null && type != null && type.contains("recent")) {
             FirebaseDatabase.getInstance().getReference().child("Recent")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(show).updateChildren(map);
-        } else {
+        }
+        if (key != null)
             FirebaseDatabase.getInstance().getReference().child("Recent")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(key).updateChildren(map);
-        }
+
         super.onBackPressed();
     }
-
 
 
 }
