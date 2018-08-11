@@ -13,12 +13,18 @@
         android:background="@drawable/welcome_bg"
         android:scaleType="centerCrop" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/welcome_backdrop"/>
+
+
     <Button
         android:id="@+id/google_sign_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/skip_btn"
-        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
         android:layout_marginLeft="80dp"
         android:layout_marginRight="80dp"
         android:background="@drawable/google_bg"
@@ -31,20 +37,5 @@
         android:textAlignment="center"
         android:textColor="#000"
         android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/skip_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
-        android:background="@drawable/skip_bg"
-        android:text="SKIP"
-        android:textColor="#fff"
-        android:textStyle="bold"
-        android:visibility="invisible"/>
 
 </RelativeLayout>

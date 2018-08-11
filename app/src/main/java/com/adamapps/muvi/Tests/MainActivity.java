@@ -88,14 +88,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar)findViewById(R.id.toolbar);
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         toolbarr.setTitle(R.string.app_name);
         toolbarr.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbarr);
 
-        lvBlock = (LVBlock)findViewById(R.id.block);
+        lvBlock = findViewById(R.id.block);
 
-        categoryList = (RecyclerView)findViewById(R.id.itemList);
+        categoryList = findViewById(R.id.itemList);
         new MyTask().execute();
         categoryList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -219,8 +219,8 @@ public class MainActivity extends AppCompatActivity {
         public ListHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            text = (TextView)itemView.findViewById(R.id.listText);
-            images = (ImageView)itemView.findViewById(R.id.listLogo);
+            text = itemView.findViewById(R.id.listText);
+            images = itemView.findViewById(R.id.listLogo);
             cardView = itemView.findViewById(R.id.cardView);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

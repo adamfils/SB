@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#c0c0c0"
-    tools:context="com.adamapps.muvi.Movie.WebPlayer">
+    tools:context="com.adamapps.muvi.com.adamapp.muvi.Movie.WebPlayer">
     <WebView
         android:id="@+id/webplayer"
         android:layout_width="match_parent"

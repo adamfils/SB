@@ -55,7 +55,7 @@ public class LettersActivity extends AppCompatActivity {
         url = i.getStringExtra("link");
         String tit = i.getStringExtra("word");
 
-        android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar)findViewById(R.id.toolbar);
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if(tit!=null){
             toolbarr.setTitle(tit);
         }else{
@@ -64,10 +64,10 @@ public class LettersActivity extends AppCompatActivity {
         toolbarr.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbarr);
 
-        lvBlock = (LVBlock)findViewById(R.id.block);
+        lvBlock = findViewById(R.id.block);
 
 
-        categoryList = (RecyclerView)findViewById(R.id.lettersList);
+        categoryList = findViewById(R.id.lettersList);
         new MyTask().execute();
         //categoryList.setLayoutManager(new GridLayoutManager(this,4));
         categoryList.setLayoutManager(new LinearLayoutManager(this));
@@ -164,8 +164,8 @@ public class LettersActivity extends AppCompatActivity {
         public LettersHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            text = (TextView)itemView.findViewById(R.id.letterText);
-            cardView = (CardView)itemView.findViewById(R.id.card);
+            text = itemView.findViewById(R.id.letterText);
+            cardView = itemView.findViewById(R.id.card);
             text.setSelected(true);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

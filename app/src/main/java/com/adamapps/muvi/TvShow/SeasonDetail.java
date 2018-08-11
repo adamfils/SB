@@ -89,39 +89,47 @@ public class SeasonDetail extends AppCompatActivity {
 
         FirebaseDatabase.getInstance().getReference().child("AdSelect").child("option")
                 .addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    if (dataSnapshot.getValue(Integer.class) == 1) {
-                        MobileAds.initialize(SeasonDetail.this, "ca-app-pub-5077858194293069~3201484542");
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            if (dataSnapshot.getValue(Integer.class) == 1) {
+                                MobileAds.initialize(SeasonDetail.this, "ca-app-pub-5077858194293069~3201484542");
 
-                        mInterstitialAd = new InterstitialAd(SeasonDetail.this);
-                        mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
-                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                        AdListener();
-                    } else if (dataSnapshot.getValue(Integer.class) == 2) {
-                        MobileAds.initialize(SeasonDetail.this, "ca-app-pub-5134322630248880~5594892098");
+                                mInterstitialAd = new InterstitialAd(SeasonDetail.this);
+                                mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+                                //mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                AdListener();
+                            } else if (dataSnapshot.getValue(Integer.class) == 2) {
+                                MobileAds.initialize(SeasonDetail.this, "ca-app-pub-5134322630248880~5594892098");
 
-                        mInterstitialAd = new InterstitialAd(SeasonDetail.this);
-                        mInterstitialAd.setAdUnitId("ca-app-pub-5134322630248880/1464075399");
-                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                        AdListener();
-                    } else if (dataSnapshot.getValue(Integer.class) == 0) {
-                        FirebaseDatabase.getInstance().getReference().child("AdSelect").child("appID")
-                                .addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        MobileAds.initialize(SeasonDetail.this, dataSnapshot.getValue(String.class));
-
-                                        mInterstitialAd = new InterstitialAd(SeasonDetail.this);
-
-                                        FirebaseDatabase.getInstance().getReference().child("AdSelect")
-                                                .child("interstitialID").addValueEventListener(new ValueEventListener() {
+                                mInterstitialAd = new InterstitialAd(SeasonDetail.this);
+                                mInterstitialAd.setAdUnitId("ca-app-pub-5134322630248880/1464075399");
+                                //mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                AdListener();
+                            } else if (dataSnapshot.getValue(Integer.class) == 0) {
+                                FirebaseDatabase.getInstance().getReference().child("AdSelect").child("appID")
+                                        .addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                                mInterstitialAd.setAdUnitId(dataSnapshot.getValue(String.class));
-                                                mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                                                AdListener();
+                                                MobileAds.initialize(SeasonDetail.this, dataSnapshot.getValue(String.class));
+
+                                                mInterstitialAd = new InterstitialAd(SeasonDetail.this);
+
+                                                FirebaseDatabase.getInstance().getReference().child("AdSelect")
+                                                        .child("interstitialID").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        mInterstitialAd.setAdUnitId(dataSnapshot.getValue(String.class));
+                                                        //mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                                        AdListener();
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
                                             }
 
                                             @Override
@@ -129,32 +137,22 @@ public class SeasonDetail extends AppCompatActivity {
 
                                             }
                                         });
+                            } else {
+                                MobileAds.initialize(SeasonDetail.this, "ca-app-pub-5077858194293069~3201484542");
 
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-                    } else {
-                        MobileAds.initialize(SeasonDetail.this, "ca-app-pub-5077858194293069~3201484542");
-
-                        mInterstitialAd = new InterstitialAd(SeasonDetail.this);
-                        mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
-                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                        AdListener();
+                                mInterstitialAd = new InterstitialAd(SeasonDetail.this);
+                                mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+                                //mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                AdListener();
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
-
-
+                    }
+                });
 
 
         if (nextPref.getString("openTime", null) == null) {
@@ -170,9 +168,6 @@ public class SeasonDetail extends AppCompatActivity {
             editor2.putString("openTime", String.valueOf(added));
             editor2.apply();
         }
-
-
-
 
         android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if (tit != null) {
@@ -191,7 +186,12 @@ public class SeasonDetail extends AppCompatActivity {
         categoryList.setLayoutManager(new GridLayoutManager(this, 2));
     }
 
-    public void AdListener(){
+    public void AdListener() {
+
+        if (nextPref.getString("openTime", null) == null) {
+            mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        }
+
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
@@ -336,8 +336,12 @@ public class SeasonDetail extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull final SeasonHolderHolder holder, int position) {
-            if (titlesArray.get(position) != null) {
-                holder.showName.setText(words.get(position).substring(0, String.valueOf(words.get(position)).length() - 13));
+            if (titlesArray.get(position) != null && position < words.size()) {
+                if (words.size() > 13) {
+                    holder.showName.setText(words.get(position).substring(0, String.valueOf(words.get(position)).length() - 13));
+                }else{
+                    holder.showName.setText(words.get(position));
+                }
                 Picasso.with(getApplicationContext()).load(thumbArray.get(position)).into(holder.testImage);
                 //int val = random.nextInt(colors.length);
                 holder.testText.setText(String.valueOf(position + 1));

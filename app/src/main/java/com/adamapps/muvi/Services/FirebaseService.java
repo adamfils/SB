@@ -16,7 +16,7 @@ public class FirebaseService extends FirebaseMessagingService {
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
-        Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show();
     }
 
 

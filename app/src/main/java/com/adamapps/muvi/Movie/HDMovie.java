@@ -6,10 +6,10 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,26 +21,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.adamapps.muvi.R;
-import com.adamapps.muvi.StartUp.Splash;
 import com.adamapps.muvi.StartUp.Welcome;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
@@ -50,7 +39,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class HDMovie extends AppCompatActivity {
 
@@ -78,7 +66,6 @@ public class HDMovie extends AppCompatActivity {
     String imageQuery = "ul.ulclear >div.movies-list>li.movie-item>a>img";
     String nextLinkQuery = "ul.pagination>li>a";
     MaterialSearchView searchView;
-    InterstitialAd mInterstitialAd;
     SharedPreferences nextPref;
 
     @Override
@@ -105,7 +92,7 @@ public class HDMovie extends AppCompatActivity {
         nextPref = getApplicationContext().getSharedPreferences("NextAd", MODE_PRIVATE);
         SharedPreferences.Editor editor2 = nextPref.edit();
 
-        FirebaseDatabase.getInstance().getReference().child("AdSelect").child("option")
+        /*FirebaseDatabase.getInstance().getReference().child("AdSelect").child("option")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -170,37 +157,37 @@ public class HDMovie extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });
+                });*/
 
 
-        if(isTablet(HDMovie.this)){
+        if (isTablet(HDMovie.this)) {
             Display getOrient = getWindowManager().getDefaultDisplay();
             int orientation = Configuration.ORIENTATION_UNDEFINED;
-            if(getOrient.getWidth()==getOrient.getHeight()){
+            if (getOrient.getWidth() == getOrient.getHeight()) {
                 orientation = Configuration.ORIENTATION_SQUARE;
 
-            } else{
-                if(getOrient.getWidth() < getOrient.getHeight()){
+            } else {
+                if (getOrient.getWidth() < getOrient.getHeight()) {
                     orientation = Configuration.ORIENTATION_PORTRAIT;
                     hdlist.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
-                }else {
+                } else {
                     orientation = Configuration.ORIENTATION_LANDSCAPE;
                     hdlist.setLayoutManager(new GridLayoutManager(getApplicationContext(), 4));
                 }
             }
 
 
-        }else{
+        } else {
             Display getOrient = getWindowManager().getDefaultDisplay();
             int orientation = Configuration.ORIENTATION_UNDEFINED;
-            if(getOrient.getWidth()==getOrient.getHeight()){
+            if (getOrient.getWidth() == getOrient.getHeight()) {
                 orientation = Configuration.ORIENTATION_SQUARE;
-            } else{
-                if(getOrient.getWidth() < getOrient.getHeight()){
+            } else {
+                if (getOrient.getWidth() < getOrient.getHeight()) {
                     orientation = Configuration.ORIENTATION_PORTRAIT;
                     hdlist.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
 
-                }else {
+                } else {
                     orientation = Configuration.ORIENTATION_LANDSCAPE;
                     hdlist.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
 
@@ -244,67 +231,25 @@ public class HDMovie extends AppCompatActivity {
         });
 
 
-
-
         if (nextPref.getString("openTime", null) == null) {
             editor2.putString("openTime", "1");
             editor2.apply();
         }
-        if (nextPref.getString("openTime", null) != null && Integer.parseInt(nextPref.getString("openTime", null)) >= 3) {
+        if (nextPref.getString("openTime", null) != null && Integer.parseInt(nextPref.getString("openTime", null)) >= 5) {
             editor2.clear();
             editor2.apply();
         }
-        if (nextPref.getString("openTime", null) != null && Integer.parseInt(nextPref.getString("openTime", null)) <= 3) {
+        if (nextPref.getString("openTime", null) != null && Integer.parseInt(nextPref.getString("openTime", null)) <= 5) {
             int added = Integer.parseInt(nextPref.getString("openTime", null)) + 1;
             editor2.putString("openTime", String.valueOf(added));
             editor2.apply();
         }
 
-       //AdListener();
+
 
     }
 
-    public void AdListener(){
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-            }
 
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-            }
-
-            @Override
-            public void onAdLeftApplication() {
-                super.onAdLeftApplication();
-            }
-
-            @Override
-            public void onAdOpened() {
-                super.onAdOpened();
-            }
-
-            @Override
-            public void onAdLoaded() {
-                if (nextPref.getString("openTime", null) == null ) {
-                    mInterstitialAd.show();
-                }
-
-            }
-
-            @Override
-            public void onAdClicked() {
-                super.onAdClicked();
-            }
-
-            @Override
-            public void onAdImpression() {
-                super.onAdImpression();
-            }
-        });
-    }
 
     public class MyTask extends AsyncTask {
         @Override
@@ -384,13 +329,19 @@ public class HDMovie extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Object o) {
-            searchView.clearFocus();
-            for (Element image : imageSearchElm) {
-                imageSearchArray.add(image.attr("src"));
+            if (searchView.hasFocus()) {
+                searchView.clearFocus();
             }
-            for (Element link : linkSearchElm) {
-                linkSearchArray.add(link.attr("href"));
-                titleSearchArray.add(link.attr("title"));
+            if (linkSearchElm != null) {
+                for (Element image : imageSearchElm) {
+                    imageSearchArray.add(image.attr("src"));
+                }
+            }
+            if (linkSearchElm != null) {
+                for (Element link : linkSearchElm) {
+                    linkSearchArray.add(link.attr("href"));
+                    titleSearchArray.add(link.attr("title"));
+                }
             }
 
             hdlist.setAdapter(new HDSearchAdapter(imageSearchArray, linkSearchArray, titleSearchArray));
@@ -412,8 +363,9 @@ public class HDMovie extends AppCompatActivity {
     }
 
     public class HDAdapter extends RecyclerView.Adapter<HDHolder> {
+        @NonNull
         @Override
-        public HDHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public HDHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.letter_detail_layout, parent, false);
             return new HDHolder(v);
         }
@@ -458,7 +410,7 @@ public class HDMovie extends AppCompatActivity {
         }
 
         void setImage(final Context c, final String image) {
-            Picasso.with(c).load(image).memoryPolicy(MemoryPolicy.NO_CACHE).into(imageView);
+            Picasso.with(c).load(image).error(R.drawable.noimage).placeholder(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(imageView);
         }
     }
 
@@ -490,9 +442,12 @@ public class HDMovie extends AppCompatActivity {
                 public void onClick(View v) {
                     YoYo.with(Techniques.RubberBand).duration(500).playOn(v);
                     Intent i = new Intent(HDMovie.this, MovieDetail.class);
-                    i.putExtra("title", titleSearchArray.get(position));
-                    i.putExtra("link", linkSearchArray.get(position));
-                    i.putExtra("image", imageSearch.get(position));
+                    if (titleSearchArray.size() < position)
+                        i.putExtra("title", titleSearchArray.get(position));
+                    if (linkSearchArray.size() < position)
+                        i.putExtra("link", linkSearchArray.get(position));
+                    if (imageSearch.size() < position)
+                        i.putExtra("image", imageSearch.get(position));
                     startActivity(i);
                 }
             });
@@ -517,12 +472,12 @@ public class HDMovie extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_logout){
+        if (item.getItemId() == R.id.action_logout) {
             FirebaseAuth.getInstance().signOut();
             finish();
             startActivity(new Intent(this, Welcome.class));
         }
-        return  true;
+        return true;
     }
 
     @Override
@@ -539,4 +494,5 @@ public class HDMovie extends AppCompatActivity {
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
+
 }

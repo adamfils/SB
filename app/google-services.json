@@ -8,18 +8,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:100200678376:android:6dbba89d41345349",
+        "mobilesdk_app_id": "1:100200678376:android:bc47bbb2b6e9fb4f",
         "android_client_info": {
-          "package_name": "com.adamapps.toxic"
+          "package_name": "com.adamapp.muvi"
         }
       },
       "oauth_client": [
         {
-          "client_id": "100200678376-4rd91j6f4otrkc8jr1a1da1j4d2ca1cu.apps.googleusercontent.com",
+          "client_id": "100200678376-65ja95f2g4cf4iiti05s6kdt12qtqspb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.adamapps.toxic",
-            "certificate_hash": "e7b97442d3732fd7b5dc6198edd46e7495244272"
+            "package_name": "com.adamapp.muvi",
+            "certificate_hash": "8ff8293155c42a5ea4ce0f920974f4c2cbb50e32"
           }
         },
         {
@@ -42,6 +42,13 @@
             {
               "client_id": "100200678376-qsm90b0p85pqe8rj1fcfl0seuotpemjv.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "100200678376-vurbpuhnvcgak59gu2h3er1su3v702ou.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.adamapps.Muvi"
+              }
             }
           ]
         },
@@ -67,6 +74,30 @@
           }
         },
         {
+          "client_id": "100200678376-5db08fcgi2ul0jgd4i9mc5jobkcosnqs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adamapps.muvi",
+            "certificate_hash": "18e84734c762e36555e76beeafda86b0bee420ba"
+          }
+        },
+        {
+          "client_id": "100200678376-s2v0pbmtjurkec4vuco7tpnfkn5mfqqs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adamapps.muvi",
+            "certificate_hash": "ec7b18731b2e1a47bf851b32a7e50048ef919dda"
+          }
+        },
+        {
+          "client_id": "100200678376-2nq7l334e5jp1jijhn8qe8pcrr649ras.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adamapps.muvi",
+            "certificate_hash": "8ff8293155c42a5ea4ce0f920974f4c2cbb50e32"
+          }
+        },
+        {
           "client_id": "100200678376-qsm90b0p85pqe8rj1fcfl0seuotpemjv.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -86,6 +117,13 @@
             {
               "client_id": "100200678376-qsm90b0p85pqe8rj1fcfl0seuotpemjv.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "100200678376-vurbpuhnvcgak59gu2h3er1su3v702ou.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.adamapps.Muvi"
+              }
             }
           ]
         },

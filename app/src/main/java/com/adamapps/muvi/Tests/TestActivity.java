@@ -69,7 +69,7 @@ public class TestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
-        lvBlock = (LVBlock) findViewById(R.id.block);
+        lvBlock = findViewById(R.id.block);
 
         random = new Random();
 
@@ -77,7 +77,7 @@ public class TestActivity extends AppCompatActivity {
         url = i.getStringExtra("link");
         tit = i.getStringExtra("word");
 
-        android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if (tit != null) {
             toolbarr.setTitle(tit);
         } else {
@@ -86,9 +86,9 @@ public class TestActivity extends AppCompatActivity {
         toolbarr.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbarr);
 
-        categoryList = (ListView) findViewById(R.id.letterDetailList);
+        categoryList = findViewById(R.id.letterDetailList);
 
-        nextButton = (FloatingActionButton) findViewById(R.id.next_btn);
+        nextButton = findViewById(R.id.next_btn);
 
 
     }

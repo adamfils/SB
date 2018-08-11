@@ -21,12 +21,6 @@ import android.widget.TextView;
 
 import com.adamapps.muvi.MovieModels.MovieModel;
 import com.adamapps.muvi.R;
-import com.adamapps.muvi.Tests.LetterDetail;
-import com.adamapps.muvi.TvShow.Search;
-import com.adamapps.muvi.TvShow.SeasonActivityTv4;
-import com.adamapps.muvi.TvShow.SeasonDetail;
-import com.adamapps.muvi.TvShow.SeasonsActivity;
-import com.adamapps.muvi.TvShowModels.ShowModel;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;

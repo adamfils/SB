@@ -7,7 +7,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adamapps.muvi.R;
-import com.firebase.ui.FirebaseUI;
 import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

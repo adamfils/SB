@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.adamapps.muvi.R;
 
 
 public class MovieDetailTest extends AppCompatActivity {

@@ -25,6 +25,10 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ldoublem.loadingviewlib.view.LVBlock;
 
 import org.jsoup.Jsoup;
@@ -54,6 +58,7 @@ public class SeasonDetail4Tv extends AppCompatActivity {
     //String[] colors = {"#6258c4", "#673a3f", "#78d1b6", "#d725de", "#665fd1", "#9c6d57", "#fa2a55"};
     Random random;
     InterstitialAd mInterstitialAd;
+    SharedPreferences nextPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +72,75 @@ public class SeasonDetail4Tv extends AppCompatActivity {
         tit = i.getStringExtra("word");
         tag = i.getStringExtra("tag");
 
-        MobileAds.initialize(this, getResources().getString(R.string.ad_app_id));
-
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getResources().getString(R.string.ad_interstitial_unit_id));
-
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        final SharedPreferences nextPref = getApplicationContext().getSharedPreferences("SDetail", MODE_PRIVATE);
+        nextPref = getApplicationContext().getSharedPreferences("SDetail", MODE_PRIVATE);
         SharedPreferences.Editor editor2 = nextPref.edit();
+
+        FirebaseDatabase.getInstance().getReference().child("AdSelect").child("option")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            if (dataSnapshot.getValue(Integer.class) == 1) {
+                                MobileAds.initialize(SeasonDetail4Tv.this, "ca-app-pub-5077858194293069~3201484542");
+
+                                mInterstitialAd = new InterstitialAd(SeasonDetail4Tv.this);
+                                mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+                                //mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                AdListener();
+                            } else if (dataSnapshot.getValue(Integer.class) == 2) {
+                                MobileAds.initialize(SeasonDetail4Tv.this, "ca-app-pub-5134322630248880~5594892098");
+
+                                mInterstitialAd = new InterstitialAd(SeasonDetail4Tv.this);
+                                mInterstitialAd.setAdUnitId("ca-app-pub-5134322630248880/1464075399");
+                                //mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                AdListener();
+                            } else if (dataSnapshot.getValue(Integer.class) == 0) {
+                                FirebaseDatabase.getInstance().getReference().child("AdSelect").child("appID")
+                                        .addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                MobileAds.initialize(SeasonDetail4Tv.this, dataSnapshot.getValue(String.class));
+
+                                                mInterstitialAd = new InterstitialAd(SeasonDetail4Tv.this);
+
+                                                FirebaseDatabase.getInstance().getReference().child("AdSelect")
+                                                        .child("interstitialID").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        mInterstitialAd.setAdUnitId(dataSnapshot.getValue(String.class));
+                                                        //mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                                        AdListener();
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                            } else {
+                                MobileAds.initialize(SeasonDetail4Tv.this, "ca-app-pub-5077858194293069~3201484542");
+
+                                mInterstitialAd = new InterstitialAd(SeasonDetail4Tv.this);
+                                mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+                                //mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                AdListener();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
 
         if (nextPref.getString("openTime", null) == null) {
@@ -91,7 +157,30 @@ public class SeasonDetail4Tv extends AppCompatActivity {
             editor2.apply();
         }
 
-        mInterstitialAd.setAdListener(new AdListener(){
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
+        if (tit != null) {
+            toolbarr.setTitle(tit);
+        } else {
+            toolbarr.setTitle(R.string.app_name);
+        }
+        toolbarr.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbarr);
+
+
+        categoryList = findViewById(R.id.seasonDetail);
+        new MyTask().execute();
+        //categoryList.setLayoutManager(new GridLayoutManager(this,4));
+        nextButton = findViewById(R.id.next_btn);
+        categoryList.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    public void AdListener(){
+
+        if (nextPref.getString("openTime", null) == null) {
+            mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        }
+
+        mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
@@ -114,8 +203,8 @@ public class SeasonDetail4Tv extends AppCompatActivity {
 
             @Override
             public void onAdLoaded() {
-                if(nextPref.getString("openTime", null) == null)
-                mInterstitialAd.show();
+                if (nextPref.getString("openTime", null) == null)
+                    mInterstitialAd.show();
             }
 
             @Override
@@ -128,22 +217,6 @@ public class SeasonDetail4Tv extends AppCompatActivity {
                 super.onAdImpression();
             }
         });
-
-        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
-        if (tit != null) {
-            toolbarr.setTitle(tit);
-        } else {
-            toolbarr.setTitle(R.string.app_name);
-        }
-        toolbarr.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbarr);
-
-
-        categoryList = findViewById(R.id.seasonDetail);
-        new MyTask().execute();
-        //categoryList.setLayoutManager(new GridLayoutManager(this,4));
-        nextButton = findViewById(R.id.next_btn);
-        categoryList.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private class MyTask extends AsyncTask {

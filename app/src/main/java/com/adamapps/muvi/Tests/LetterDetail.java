@@ -73,7 +73,7 @@ public class LetterDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_letter_detail);
 
-        lvBlock = (LVBlock) findViewById(R.id.block);
+        lvBlock = findViewById(R.id.block);
 
         random = new Random();
 
@@ -81,7 +81,7 @@ public class LetterDetail extends AppCompatActivity {
         url = i.getStringExtra("link");
         tit = i.getStringExtra("word");
 
-        android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if (tit != null) {
             toolbarr.setTitle(tit);
         } else {
@@ -90,11 +90,11 @@ public class LetterDetail extends AppCompatActivity {
         toolbarr.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbarr);
 
-        categoryList = (RecyclerView) findViewById(R.id.letterDetailList);
+        categoryList = findViewById(R.id.letterDetailList);
 
 
         categoryList.setLayoutManager(new GridLayoutManager(this, 2));
-        nextButton = (FloatingActionButton) findViewById(R.id.next_btn);
+        nextButton = findViewById(R.id.next_btn);
 
     }
 
@@ -326,8 +326,8 @@ public class LetterDetail extends AppCompatActivity {
         public DetailHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            text = (TextView) itemView.findViewById(R.id.letterText);
-            cardView = (CardView) itemView.findViewById(R.id.card);
+            text = itemView.findViewById(R.id.letterText);
+            cardView = itemView.findViewById(R.id.card);
             imageView = itemView.findViewById(R.id.movie_poster);
             rating = itemView.findViewById(R.id.movie_rating);
             text.setSelected(true);

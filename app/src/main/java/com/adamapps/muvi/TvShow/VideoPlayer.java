@@ -3,16 +3,13 @@ package com.adamapps.muvi.TvShow;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.AudioFocusRequest;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.adamapps.muvi.Movie.MovieWebView;
 import com.adamapps.muvi.R;
 import com.afollestad.easyvideoplayer.EasyVideoCallback;
 import com.afollestad.easyvideoplayer.EasyVideoPlayer;
@@ -306,10 +303,6 @@ public class VideoPlayer extends AppCompatActivity {
         });
     }
 
-
-
-
-
     private class MyTask extends AsyncTask {
         @Override
         protected void onPreExecute() {
@@ -320,11 +313,12 @@ public class VideoPlayer extends AppCompatActivity {
         protected void onPostExecute(Object o) {
             if (firstLinks != null) {
                 for (Element vid : firstLinks) {
-                    vidUrl = String.valueOf(vid.attr("src"));
+                    vidUrl = vid.attr("src");
                 }
             }
 
-            if (tag != null && tag.equals("toxic")) {
+            Toast.makeText(VideoPlayer.this, "Vid link = "+vidUrl, Toast.LENGTH_SHORT).show();
+            if (tag != null && tag.equals("toxic")&& vidUrl!=null) {
                 videoPlayer.setSource(Uri.parse(vidUrl));
             }
 
@@ -350,7 +344,7 @@ public class VideoPlayer extends AppCompatActivity {
 
                 @Override
                 public void onPrepared(EasyVideoPlayer player) {
-                    if (type != null && type.equals("recent")) {
+                    if (type != null && type.equals("recent") && time!=null) {
                         player.seekTo(Integer.parseInt(time));
                     }
                     if (mRewardedVideoAd.isLoaded()) {
@@ -423,8 +417,6 @@ public class VideoPlayer extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         videoPlayer.release();
-
-
     }
 
     @Override

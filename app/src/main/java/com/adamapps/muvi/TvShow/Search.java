@@ -23,15 +23,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.adamapps.muvi.Movie.HDMovie;
 import com.adamapps.muvi.StartUp.Welcome;
 import com.adamapps.muvi.Tests.LetterDetail;
+import com.adamapps.muvi.TvShowModels.ShowModel;
+import com.adamapps.muvi.User.Recent;
+import com.adamapps.muvi.Movie.HDMovie;
 import com.adamapps.muvi.R;
 import com.adamapps.muvi.User.Favorite;
-import com.adamapps.muvi.User.Profile;
-import com.adamapps.muvi.User.Recent;
-import com.adamapps.muvi.Movie.SearchMovie;
-import com.adamapps.muvi.TvShowModels.ShowModel;
 import com.crashlytics.android.Crashlytics;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -51,9 +49,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -93,7 +89,7 @@ public class Search extends AppCompatActivity {
         Crashlytics.setUserIdentifier(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
-        updateRef = FirebaseDatabase.getInstance().getReference("lock/v1/close");
+        updateRef = FirebaseDatabase.getInstance().getReference("lock/v1,2/close");
         updateRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -105,10 +101,26 @@ public class Search extends AppCompatActivity {
                     Button update = v.findViewById(R.id.warning_update_btn);
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.adamapps.muvi"));
-                            startActivity(intent);
-                            YoYo.with(Techniques.RubberBand).duration(400).playOn(v);
+                        public void onClick(final View v) {
+                            //Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.adamapps.muvi"));
+                            FirebaseDatabase.getInstance().getReference("update/link").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.getValue() != null) {
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(dataSnapshot.getValue(String.class)));
+                                        startActivity(intent);
+                                        YoYo.with(Techniques.RubberBand).duration(400).playOn(v);
+                                    } else {
+                                        Toast.makeText(Search.this, "No Update Link Found", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
                         }
                     });
 
@@ -131,12 +143,68 @@ public class Search extends AppCompatActivity {
             }
         });
 
-        MobileAds.initialize(this, "ca-app-pub-5077858194293069~3201484542");
+        FirebaseDatabase.getInstance().getReference().child("AdSelect").child("option")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            if (dataSnapshot.getValue(Integer.class) == 1) {
+                                MobileAds.initialize(Search.this, "ca-app-pub-5077858194293069~3201484542");
 
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+                                mInterstitialAd = new InterstitialAd(Search.this);
+                                mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+                                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                            } else if (dataSnapshot.getValue(Integer.class) == 2) {
+                                MobileAds.initialize(Search.this, "ca-app-pub-5134322630248880~5594892098");
 
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                mInterstitialAd = new InterstitialAd(Search.this);
+                                mInterstitialAd.setAdUnitId("ca-app-pub-5134322630248880/1464075399");
+                                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                            } else if (dataSnapshot.getValue(Integer.class) == 0) {
+                                FirebaseDatabase.getInstance().getReference().child("AdSelect").child("appID")
+                                        .addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                MobileAds.initialize(Search.this, dataSnapshot.getValue(String.class));
+
+                                                mInterstitialAd = new InterstitialAd(Search.this);
+
+                                                FirebaseDatabase.getInstance().getReference().child("AdSelect")
+                                                        .child("interstitialID").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        mInterstitialAd.setAdUnitId(dataSnapshot.getValue(String.class));
+                                                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                            } else {
+                                MobileAds.initialize(Search.this, "ca-app-pub-5077858194293069~3201484542");
+
+                                mInterstitialAd = new InterstitialAd(Search.this);
+                                mInterstitialAd.setAdUnitId("ca-app-pub-5077858194293069/7136860128");
+                                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Tv Shows");
@@ -152,7 +220,7 @@ public class Search extends AppCompatActivity {
         profileBtn = findViewById(R.id.profile_btn);
         floatMenu = findViewById(R.id.fb_menu);
 
-        if(!isTablet(Search.this)){
+        if (!isTablet(Search.this)) {
             profileBtn.setButtonSize(FloatingActionButton.SIZE_MINI);
             moviesBtn.setButtonSize(FloatingActionButton.SIZE_MINI);
             recentBtn.setButtonSize(FloatingActionButton.SIZE_MINI);
@@ -205,9 +273,7 @@ public class Search extends AppCompatActivity {
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(final String queryText) {
-                //Do some magic
-                //query = reference.orderByChild("nameSearch").startAt(queryText.toLowerCase());
-                //queryCall(query);
+
                 if (searchView.isSearchOpen()) {
                     floatMenu.close(true);
                 }
@@ -226,7 +292,6 @@ public class Search extends AppCompatActivity {
                             if (ds.child("nameSearch").getValue(String.class) != null && ds.child("nameSearch").getValue(String.class).contains(queryText.toLowerCase())) {
                                 searchResults(ds.getKey());
                             }
-                            //reference.keepSynced(true);
                         }
                         if (isTablet(Search.this)) {
                             Display getOrient = getWindowManager().getDefaultDisplay();
@@ -270,7 +335,7 @@ public class Search extends AppCompatActivity {
 
                     }
                 });
-                searchView.clearFocus();
+                //searchView.clearFocus();
                 return true;
             }
 
@@ -290,7 +355,6 @@ public class Search extends AppCompatActivity {
             }
         });
 
-        reference.keepSynced(true);
     }
 
     private void searchResults(String childNode) {
@@ -383,42 +447,43 @@ public class Search extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull final ShowHolder holder, final int position) {
-            if (!titleSearch.get(position).equals("Next Page") && !titleSearch.get(position).equals("Next")) {
-                holder.setImage(Search.this, imageSearch.get(position));
-                holder.setTitle(titleSearch.get(position));
-                if (titleSearch.size() == ratingSearch.size())
-                    holder.setRating(ratingSearch.get(position));
-                holder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        YoYo.with(Techniques.RubberBand).duration(500).playOn(holder.mView);
-                        if (tagSearch.get(position).contains("tv4mobile")) {
-                            Intent i = new Intent(Search.this, SeasonActivityTv4.class);
-                            i.putExtra("link", linkSearch.get(position));
-                            i.putExtra("desc", descSearch.get(position));
-                            i.putExtra("word", titleSearch.get(position));
-                            i.putExtra("image", imageSearch.get(position));
-                            i.putExtra("tag", tagSearch.get(position));
-                            //Toast.makeText(Search.this, "Tag  Search = " + tagSearch.get(position), Toast.LENGTH_SHORT).show();
-                            floatMenu.close(true);
-                            startActivity(i);
-                        } else {
-                            Intent i = new Intent(Search.this, SeasonsActivity.class);
-                            i.putExtra("link", linkSearch.get(position));
-                            i.putExtra("desc", descSearch.get(position));
-                            i.putExtra("word", titleSearch.get(position));
-                            i.putExtra("image", imageSearch.get(position));
-                            i.putExtra("tag", tagSearch.get(position));
-                            //Toast.makeText(Search.this, "Tag  Search = " + tagSearch.get(position), Toast.LENGTH_SHORT).show();
-                            floatMenu.close(true);
-                            startActivity(i);
+            if (position < titleSearch.size())
+                if (!titleSearch.get(position).equals("Next Page") && !titleSearch.get(position).equals("Next")) {
+                    holder.setImage(Search.this, imageSearch.get(position));
+                    holder.setTitle(titleSearch.get(position));
+                /*if (titleSearch.size() == ratingSearch.size())
+                    holder.setRating(ratingSearch.get(position));*/
+                    holder.mView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            YoYo.with(Techniques.RubberBand).duration(500).playOn(holder.mView);
+                            if (tagSearch.get(position).contains("tv4mobile")) {
+                                Intent i = new Intent(Search.this, SeasonActivityTv4.class);
+                                i.putExtra("link", linkSearch.get(position));
+                                i.putExtra("desc", descSearch.get(position));
+                                i.putExtra("word", titleSearch.get(position));
+                                i.putExtra("image", imageSearch.get(position));
+                                i.putExtra("tag", tagSearch.get(position));
+                                //Toast.makeText(Search.this, "Tag  Search = " + tagSearch.get(position), Toast.LENGTH_SHORT).show();
+                                floatMenu.close(true);
+                                startActivity(i);
+                            } else {
+                                Intent i = new Intent(Search.this, SeasonsActivity.class);
+                                i.putExtra("link", linkSearch.get(position));
+                                i.putExtra("desc", descSearch.get(position));
+                                i.putExtra("word", titleSearch.get(position));
+                                i.putExtra("image", imageSearch.get(position));
+                                i.putExtra("tag", tagSearch.get(position));
+                                //Toast.makeText(Search.this, "Tag  Search = " + tagSearch.get(position), Toast.LENGTH_SHORT).show();
+                                floatMenu.close(true);
+                                startActivity(i);
+                            }
                         }
-                    }
-                });
+                    });
 
-                reference.keepSynced(true);
+                    //reference.keepSynced(true);
 
-            }
+                }
         }
 
         @Override
@@ -611,7 +676,7 @@ public class Search extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_logout){
+        if (item.getItemId() == R.id.action_logout) {
             FirebaseAuth.getInstance().signOut();
             finish();
             startActivity(new Intent(this, Welcome.class));
@@ -624,9 +689,8 @@ public class Search extends AppCompatActivity {
         if (searchView.isSearchOpen()) {
             searchView.closeSearch();
         } else {
-            if (mInterstitialAd.isLoaded()) {
+            if (mInterstitialAd.isLoaded()&& mInterstitialAd!=null) {
                 mInterstitialAd.show();
-
             } else {
                 super.onBackPressed();
             }

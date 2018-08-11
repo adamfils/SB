@@ -4,7 +4,9 @@
     package="com.adamapps.muvi">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".App.CacheApp"
@@ -21,6 +23,26 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <service
+            android:name=".Services.NotificationService"
+            android:enabled="true"
+            android:icon="@drawable/ic_launcher" />
+
+        //Ad
+        <activity
+            android:name="com.ironsource.sdk.controller.ControllerActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true" />
+        <activity
+            android:name="com.ironsource.sdk.controller.InterstitialActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity
+            android:name="com.ironsource.sdk.controller.OpenUrlActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"
+            android:theme="@android:style/Theme.Translucent" />
 
         <activity android:name=".Tests.MainActivity" />
         <activity android:name=".Tests.LettersActivity" />
@@ -41,6 +63,7 @@
             android:name=".Movie.WebPlayer"
             android:screenOrientation="landscape" />
         <activity android:name=".Movie.MovieList" />
+        <activity android:name=".Movie.Animation" />
         <activity android:name=".Movie.SearchMovie" />
         <activity android:name=".StartUp.Splash">
             <intent-filter>
@@ -55,15 +78,27 @@
         <activity android:name=".Movie.HDMovie" />
         <activity
             android:name=".Movie.MovieDetail"
-            android:screenOrientation="portrait" />
+            android:parentActivityName=".TvShow.Show"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TvShow.Show" />
+        </activity>
         <activity android:name=".Movie.SeeHDList" />
         <activity android:name=".MovieDetailTest" />
         <activity
             android:name=".Movie.MovieWebView"
+            android:configChanges="orientation|keyboardHidden"
+            android:hardwareAccelerated="true"
             android:screenOrientation="landscape" />
         <activity android:name=".User.Favorite" />
         <activity android:name=".User.About" />
-        <activity android:name=".Tests.NewShows"></activity>
+        <activity android:name=".Tests.NewShows" />
+        <activity
+            android:name=".WebPlayer.MovieWebviewNew"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:screenOrientation="sensorLandscape" />
+        <activity android:name=".StartUp.EmailActivity"></activity>
     </application>
 
 </manifest>

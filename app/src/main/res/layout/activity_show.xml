@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary" />
+
     <com.miguelcatalan.materialsearchview.MaterialSearchView
         android:id="@+id/search_view"
         android:layout_width="match_parent"
@@ -21,7 +22,7 @@
         android:id="@+id/hdlist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"/>
+        android:layout_below="@+id/toolbar" />
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/nextBtn"
@@ -31,11 +32,11 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="10dp"
+        android:layout_marginEnd="80dp"
         android:layout_marginRight="80dp"
         android:src="@drawable/ic_arrow_forward_black_24dp"
-        app:fab_size="mini"
         app:fab_colorNormal="@color/colorAccent"
-        android:layout_marginEnd="80dp" />
+        app:fab_size="mini" />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fb_menu"
@@ -43,34 +44,43 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        app:menu_fab_size="mini"
+        android:layout_alignParentStart="true"
         android:layout_marginBottom="8dp"
         app:menu_colorNormal="@color/colorAccent"
-        android:layout_alignParentStart="true">
+        app:menu_fab_size="mini">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/animation_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_movie"
+            app:fab_colorNormal="@color/colorAccent"
+            app:fab_label="Animation" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/movies_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_movie"
-            app:fab_label="Movies"
-            app:fab_colorNormal="@color/colorAccent"/>
+            app:fab_colorNormal="@color/colorAccent"
+            app:fab_label="Movies" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/profile_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_favorite"
-            app:fab_label="Favorite"
-            app:fab_colorNormal="@color/colorAccent"/>
+            app:fab_colorNormal="@color/colorAccent"
+            app:fab_label="Favorite" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/recent_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_recent"
-            app:fab_label="Old Library"
-            app:fab_colorNormal="@color/colorAccent"/>
+            app:fab_colorNormal="@color/colorAccent"
+            app:fab_label="Tv Show 2"
+            android:visibility="gone"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 

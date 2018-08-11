@@ -17,11 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.adamapps.muvi.Movie.MovieDetail;
-import com.adamapps.muvi.Movie.SearchMovie;
-import com.adamapps.muvi.MovieModels.MovieModel;
 import com.adamapps.muvi.R;
-import com.adamapps.muvi.TvShow.Search;
 import com.adamapps.muvi.UserModels.RecentModel;
 import com.adamapps.muvi.TvShow.VideoPlayer;
 import com.daimajia.androidanimations.library.Techniques;

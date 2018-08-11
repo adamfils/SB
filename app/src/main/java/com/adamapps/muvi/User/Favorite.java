@@ -16,14 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.adamapps.muvi.Movie.MovieDetail;
 import com.adamapps.muvi.R;
-import com.adamapps.muvi.TvShow.Search;
-import com.adamapps.muvi.TvShow.SeasonActivityTv4;
-import com.adamapps.muvi.TvShow.SeasonDetail;
-import com.adamapps.muvi.TvShow.SeasonsActivity;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.firebase.auth.FirebaseAuth;
@@ -101,55 +96,56 @@ public class Favorite extends AppCompatActivity {
             }
         }
 
-        FirebaseDatabase.getInstance().getReference().child("Favorite").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        firstTitle.clear();
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            firstTitle.add(ds.getKey());
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            FirebaseDatabase.getInstance().getReference().child("Favorite").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            firstTitle.clear();
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                firstTitle.add(ds.getKey());
+                            }
+                            for (int i = 0; i < firstTitle.size(); i++) {
+                                imageArray.clear();
+                                linkArray.clear();
+                                descArray.clear();
+                                tagArray.clear();
+                                DatabaseReference fav = FirebaseDatabase.getInstance().getReference().child("Favorite").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(firstTitle.get(i));
+                                fav.child("image").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        imageArray.add(dataSnapshot.getValue(String.class));
+                                        favoriteList.setAdapter(new FavouriteAdapter());
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                                fav.child("link").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        linkArray.add(dataSnapshot.getValue(String.class));
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                            }
+
                         }
-                        for (int i = 0; i < firstTitle.size(); i++) {
-                            imageArray.clear();
-                            linkArray.clear();
-                            descArray.clear();
-                            tagArray.clear();
-                            DatabaseReference fav = FirebaseDatabase.getInstance().getReference().child("Favorite").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(firstTitle.get(i));
-                            fav.child("image").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    imageArray.add(dataSnapshot.getValue(String.class));
-                                    favoriteList.setAdapter(new FavouriteAdapter());
-                                }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                            fav.child("link").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    linkArray.add(dataSnapshot.getValue(String.class));
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
                         }
 
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-
-                });
+                    });
     }
 
     public class FavouriteAdapter extends RecyclerView.Adapter<FavoriteHolder> {
@@ -171,11 +167,14 @@ public class Favorite extends AppCompatActivity {
                 public void onClick(View v) {
                     YoYo.with(Techniques.RubberBand).duration(500).playOn(holder.imageView);
 
-                    Intent i = new Intent(Favorite.this, MovieDetail.class);
-                    i.putExtra("link", linkArray.get(position));
-                    i.putExtra("title", firstTitle.get(position));
-                    i.putExtra("image", imageArray.get(position));
-                    startActivity(i);
+                    if (position < linkArray.size()) {
+
+                        Intent i = new Intent(Favorite.this, MovieDetail.class);
+                        i.putExtra("link", linkArray.get(position));
+                        i.putExtra("title", firstTitle.get(position));
+                        i.putExtra("image", imageArray.get(position));
+                        startActivity(i);
+                    }
 
                 }
             });
@@ -185,7 +184,7 @@ public class Favorite extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return imageArray.size();
+            return linkArray.size();
         }
     }
 

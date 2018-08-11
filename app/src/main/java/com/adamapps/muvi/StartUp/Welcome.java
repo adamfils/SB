@@ -10,9 +10,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.adamapps.muvi.R;
-import com.adamapps.muvi.TvShow.Search;
 import com.adamapps.muvi.TvShow.Show;
+import com.adamapps.muvi.R;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.auth.api.Auth;
@@ -36,10 +35,11 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
 
     private static final int RC_SIGN_INN = 9001;
     ImageView burnsView;
-    Button googleSignIn, skipBtn;
+    Button googleSignIn;
     FirebaseAuth auth;
     FirebaseAuth.AuthStateListener authStateListener;
     GoogleApiClient mGoogleApiClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,8 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
             }
         };
         googleSignIn = findViewById(R.id.google_sign_in);
-        skipBtn = findViewById(R.id.skip_btn);
+
+        YoYo.with(Techniques.SlideInDown).duration(1000).playOn(googleSignIn);
         googleSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,12 +71,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
                 startActivityForResult(signInIntent, RC_SIGN_INN);
             }
         });
-        skipBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                YoYo.with(Techniques.RubberBand).duration(500).playOn(skipBtn);
-            }
-        });
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -89,12 +85,14 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_CANCELED) {
 
-        if (requestCode == RC_SIGN_INN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
+            if (requestCode == RC_SIGN_INN) {
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                if (result.isSuccess()) {
+                    GoogleSignInAccount account = result.getSignInAccount();
+                    firebaseAuthWithGoogle(account);
+                }
             }
         }
     }
@@ -105,16 +103,22 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
+
+                        if (authResult.getAdditionalUserInfo().isNewUser()) {
+                            Toast.makeText(Welcome.this, "Happy To Have You " + auth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(Welcome.this, "Welcome Back "
+                                    + auth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+                        }
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        Toast.makeText(Welcome.this, "Welcome Back "
-                                + auth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+
 
                         HashMap<String, Object> map = new HashMap<>();
                         assert user != null;
                         map.put("name", user.getDisplayName());
                         //map.put("image", user.getPhotoUrl());
-                        map.put("image","https://api.adorable.io/avatars/285/"
-                                +user.getDisplayName().replace(" ","")+".png");
+                        map.put("image", "https://api.adorable.io/avatars/285/"
+                                + user.getDisplayName().replace(" ", "") + ".png");
                         map.put("email", user.getEmail());
                         FirebaseDatabase.getInstance().getReference().child("User")
                                 .child(user.getUid()).updateChildren(map);
@@ -132,7 +136,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.OnConn
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(this, ""+connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "" + connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

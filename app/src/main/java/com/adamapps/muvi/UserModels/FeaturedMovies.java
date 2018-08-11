@@ -21,11 +21,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow;
 
 public class FeaturedMovies extends AppCompatActivity {
 
-    FeatureCoverFlow coverFlow;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference recentRef;
     Query linkQuery;
@@ -40,7 +38,6 @@ public class FeaturedMovies extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_featured_movies);
 
-        coverFlow = (FeatureCoverFlow) findViewById(R.id.coverflow);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -70,7 +67,7 @@ public class FeaturedMovies extends AppCompatActivity {
 
             }
         });
-        coverFlow.setAdapter(new ShowAdapter());
+        //coverFlow.setAdapter(new ShowAdapter());
     }
 
     public class ShowAdapter extends BaseAdapter{

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#90000000"
-    tools:context="com.adamapps.muvi.TvShow.Search">
+    tools:context="com.adamapps.muvi.com.adamapp.muvi.TvShow.Search">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

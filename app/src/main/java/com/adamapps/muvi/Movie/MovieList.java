@@ -72,7 +72,7 @@ public class MovieList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
 
-        lvBlock = (LVBlock) findViewById(R.id.block);
+        lvBlock = findViewById(R.id.block);
 
         random = new Random();
         Intent i = getIntent();
@@ -83,8 +83,8 @@ public class MovieList extends AppCompatActivity {
             url = indicator;
         }
 
-        nextButton = (FloatingActionButton) findViewById(R.id.next_btn);
-        android.support.v7.widget.Toolbar toolbarr = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        nextButton = findViewById(R.id.next_btn);
+        android.support.v7.widget.Toolbar toolbarr = findViewById(R.id.toolbar);
         if (tit != null) {
             toolbarr.setTitle(tit);
         } else {
@@ -93,7 +93,7 @@ public class MovieList extends AppCompatActivity {
         toolbarr.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbarr);
 
-        categoryList = (RecyclerView) findViewById(R.id.movieList);
+        categoryList = findViewById(R.id.movieList);
         new MyTask().execute();
         //1859
         //series 1013

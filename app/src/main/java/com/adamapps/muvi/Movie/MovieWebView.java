@@ -1,19 +1,18 @@
 package com.adamapps.muvi.Movie;
 
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.webkit.WebChromeClient;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.adamapps.muvi.R;
-import com.adamapps.muvi.TvShow.SeasonDetail;
+import com.adamapps.muvi.WebPlayer.VideoEnabledWebChromeClient;
+import com.adamapps.muvi.WebPlayer.VideoEnabledWebView;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
@@ -27,7 +26,8 @@ import com.ldoublem.loadingviewlib.view.LVBlazeWood;
 public class MovieWebView extends AppCompatActivity {
 
     private RewardedVideoAd mRewardedVideoAd;
-    WebView mWebView;
+    VideoEnabledWebView mWebView;
+    VideoEnabledWebChromeClient webChromeClient;
     LVBlazeWood lvWood;
     final static String unitID = "ca-app-pub-5134322630248880/8959422031";
     final static String appID = "ca-app-pub-5134322630248880~5594892098";
@@ -116,15 +116,45 @@ public class MovieWebView extends AppCompatActivity {
                 });
 
 
-
         WebSettings mSettings = mWebView.getSettings();
-        mSettings.setSupportMultipleWindows(false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mSettings.setSafeBrowsingEnabled(true);
-        }
-        //setDesktopMode(mWebView,true);
-        mWebView.loadUrl(getIntent().getStringExtra("link"));
-        //mWebView.setWebChromeClient(new WebChromeClient());
+        }*/
+
+        // Initialize the VideoEnabledWebChromeClient and set event handlers
+        View nonVideoLayout = findViewById(R.id.nonVideoLayout); // Your own view, read class comments
+        ViewGroup videoLayout = findViewById(R.id.videoLayout); // Your own view, read class comments
+        View loadingView = getLayoutInflater().inflate(R.layout.view_loading_video, null); // Your own view, read class comments
+
+        webChromeClient = new VideoEnabledWebChromeClient(new VideoEnabledWebChromeClient(nonVideoLayout, videoLayout, loadingView, mWebView)) {
+            // Subscribe to standard events, such as onProgressChanged()...
+            @Override
+            public void onProgressChanged(WebView view, int progress) {
+                // Your code...
+            }
+        };
+        webChromeClient.setOnToggledFullscreen(new VideoEnabledWebChromeClient.ToggledFullscreenCallback() {
+            @Override
+            public void toggledFullscreen(boolean fullscreen) {
+                if (fullscreen) {
+                    WindowManager.LayoutParams attrs = getWindow().getAttributes();
+                    attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+                    attrs.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+                    getWindow().setAttributes(attrs);
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+                } else {
+                    WindowManager.LayoutParams attrs = getWindow().getAttributes();
+                    attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
+                    attrs.flags &= ~WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+                    getWindow().setAttributes(attrs);
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                }
+            }
+        });
+
+        mWebView.setWebChromeClient(webChromeClient);
+        //mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(false);
         mWebView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 //True if the host application wants to leave the current WebView and handle the url itself, otherwise return false.
@@ -133,10 +163,11 @@ public class MovieWebView extends AppCompatActivity {
         });
         mSettings.setJavaScriptEnabled(true);
         //mSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        mWebView.getSettings().setAllowFileAccess(true);
+        //mWebView.getSettings().setAllowFileAccess(true);
         mSettings.setDomStorageEnabled(true);
-        mSettings.setPluginState(WebSettings.PluginState.ON);
-        mWebView.getSettings().setAllowFileAccessFromFileURLs(true);
+        //mSettings.setPluginState(WebSettings.PluginState.ON);
+        //mWebView.getSettings().setAllowFileAccessFromFileURLs(true);
+        mWebView.loadUrl(getIntent().getStringExtra("link"));
 
         enableImmersiveMode(mWebView);
 
