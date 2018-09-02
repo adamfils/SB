@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
-    tools:context="com.adamapps.muvi.com.adamapp.muvi.StartUp.Splash">
+    android:background="#d5ad9b">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -13,6 +12,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/logo"
-        android:src="@drawable/logo" />
+        android:src="@drawable/splash2" />
 
 </RelativeLayout>

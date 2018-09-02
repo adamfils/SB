@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.adamapps.muvi">
+    package="com.adamapps.showbase">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".App.CacheApp"
+        android:name="com.adamapps.showbase.App.CacheApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,87 +18,75 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <service android:name=".Services.FirebaseService">
+        <service android:name="com.adamapps.showbase.Services.FirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".Services.NotificationService"
+            android:name="com.adamapps.showbase.Services.NotificationService"
             android:enabled="true"
             android:icon="@drawable/ic_launcher" />
 
-        //Ad
+        <activity android:name="com.adamapps.showbase.Tests.MainActivity" />
+        <activity android:name="com.adamapps.showbase.Tests.LettersActivity" />
+        <activity android:name="com.adamapps.showbase.Tests.LetterDetail" />
+        <activity android:name="com.adamapps.showbase.TvShow.SeasonsActivity" />
+        <activity android:name="com.adamapps.showbase.TvShow.SeasonDetail" />
         <activity
-            android:name="com.ironsource.sdk.controller.ControllerActivity"
-            android:configChanges="orientation|screenSize"
-            android:hardwareAccelerated="true" />
-        <activity
-            android:name="com.ironsource.sdk.controller.InterstitialActivity"
-            android:configChanges="orientation|screenSize"
-            android:hardwareAccelerated="true"
-            android:theme="@android:style/Theme.Translucent" />
-        <activity
-            android:name="com.ironsource.sdk.controller.OpenUrlActivity"
-            android:configChanges="orientation|screenSize"
-            android:hardwareAccelerated="true"
-            android:theme="@android:style/Theme.Translucent" />
-
-        <activity android:name=".Tests.MainActivity" />
-        <activity android:name=".Tests.LettersActivity" />
-        <activity android:name=".Tests.LetterDetail" />
-        <activity android:name=".TvShow.SeasonsActivity" />
-        <activity android:name=".TvShow.SeasonDetail" />
-        <activity
-            android:name=".TvShow.VideoPlayer"
+            android:name="com.adamapps.showbase.TvShow.VideoPlayer"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize" />
-        <activity android:name=".Tests.TestActivity" />
-        <activity android:name=".UserModels.FeaturedMovies" />
-        <activity android:name=".StartUp.Welcome" />
-        <activity android:name=".TvShow.Search" />
-        <activity android:name=".TvShow.SeasonActivityTv4" />
-        <activity android:name=".TvShow.SeasonDetail4Tv" />
-        <activity android:name=".TvShow.Show" />
+        <activity android:name="com.adamapps.showbase.Tests.TestActivity" />
+        <activity android:name="com.adamapps.showbase.UserModels.FeaturedMovies" />
+        <activity android:name="com.adamapps.showbase.StartUp.Welcome" />
+        <activity android:name="com.adamapps.showbase.TvShow.Search" />
+        <activity android:name="com.adamapps.showbase.TvShow.SeasonActivityTv4" />
+        <activity android:name="com.adamapps.showbase.TvShow.SeasonDetail4Tv" />
+        <activity android:name="com.adamapps.showbase.TvShow.Show" />
         <activity
-            android:name=".Movie.WebPlayer"
+            android:name="com.adamapps.showbase.Movie.WebPlayer"
             android:screenOrientation="landscape" />
-        <activity android:name=".Movie.MovieList" />
-        <activity android:name=".Movie.Animation" />
-        <activity android:name=".Movie.SearchMovie" />
-        <activity android:name=".StartUp.Splash">
+        <activity android:name="com.adamapps.showbase.Movie.MovieList" />
+        <activity android:name="com.adamapps.showbase.Movie.Animation" />
+        <activity android:name="com.adamapps.showbase.Movie.SearchMovie" />
+        <activity android:name="com.adamapps.showbase.StartUp.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity android:name=".User.Profile" />
-        <activity android:name=".User.Recent" />
-        <activity android:name=".Tests.TagShow" />
-        <activity android:name=".Movie.HDMovie" />
+        <activity android:name="com.adamapps.showbase.User.Profile" />
+        <activity android:name="com.adamapps.showbase.User.Recent" />
+        <activity android:name="com.adamapps.showbase.Tests.TagShow" />
+        <activity android:name="com.adamapps.showbase.Movie.HDMovie" />
         <activity
-            android:name=".Movie.MovieDetail"
-            android:parentActivityName=".TvShow.Show"
+            android:name="com.adamapps.showbase.Movie.MovieDetail"
+            android:parentActivityName="com.adamapps.showbase.TvShow.Show"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".TvShow.Show" />
+                android:value="com.adamapps.showbase.TvShow.Show" />
         </activity>
-        <activity android:name=".Movie.SeeHDList" />
-        <activity android:name=".MovieDetailTest" />
+        <activity android:name="com.adamapps.showbase.Movie.SeeHDList" />
+        <activity android:name="com.adamapps.showbase.MovieDetailTest" />
         <activity
-            android:name=".Movie.MovieWebView"
+            android:name="com.adamapps.showbase.Movie.MovieWebView"
             android:configChanges="orientation|keyboardHidden"
             android:hardwareAccelerated="true"
             android:screenOrientation="landscape" />
-        <activity android:name=".User.Favorite" />
-        <activity android:name=".User.About" />
-        <activity android:name=".Tests.NewShows" />
+        <activity android:name="com.adamapps.showbase.User.Favorite" />
+        <activity android:name="com.adamapps.showbase.User.About" />
+        <activity android:name="com.adamapps.showbase.Tests.NewShows" />
         <activity
-            android:name=".WebPlayer.MovieWebviewNew"
+            android:name="com.adamapps.showbase.WebPlayer.MovieWebviewNew"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:screenOrientation="sensorLandscape" />
-        <activity android:name=".StartUp.EmailActivity"></activity>
+        <activity android:name="com.adamapps.showbase.StartUp.EmailActivity" />
+        <activity android:name="com.adamapps.showbase.User.Host">
+
+        </activity>
     </application>
 
 </manifest>

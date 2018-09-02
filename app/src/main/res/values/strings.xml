@@ -1,16 +1,16 @@
 <resources>
-    <string name="app_name">MuVi</string>
+    <string name="app_name">ShowBase</string>
 
     <string name="test_ad">ca-app-pub-3940256099942544/5224354917</string>
 
-    <string name="ad_app_id">ca-app-pub-5077858194293069~3201484542</string>
-    <string name="ad_interstitial_unit_id">ca-app-pub-5077858194293069/7136860128</string>
-    <string name="appodeal_app_key">245b40bcd9ba7524ca562479b9f450b3905a6c3cbf687220</string>
-    <string name="ad_video_unit_id">ca-app-pub-5077858194293069/8200910185</string>
+
     <string name="logo">Logo</string>
     <string name="backdrop">Backdrop</string>
-    <string name="update_text">This Beta Verision Needs To Be Updated</string>
+    <string name="update_text">This Version Needs To Be Updated</string>
     <string name="update">Update</string>
     <string name="adams_production">Adams Production</string>
     <string name="review_text">Enjoy Using Muvi So Far?\n Please Take A Minute To Leave Us A Good Review On The App Store So That More People Can Discover This Great App</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/pic_supernatural"
-    tools:context="com.adamapps.muvi.Movie.MovieDetail">
+    tools:context="com.adamapps.showbase.Movie.MovieDetail">
 
     <com.flaviofaria.kenburnsview.KenBurnsView
         android:id="@+id/back_blur"
@@ -151,4 +151,12 @@
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/banner_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:elevation="2dp"/>
 </RelativeLayout>

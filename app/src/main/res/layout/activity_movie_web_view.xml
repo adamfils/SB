@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.adamapps.muvi.Movie.MovieWebView">
+    tools:context="com.adamapps.showbase.Movie.MovieWebView">
 
     <RelativeLayout
         android:id="@+id/nonVideoLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.adamapps.muvi.WebPlayer.VideoEnabledWebView
+        <com.adamapps.showbase.WebPlayer.VideoEnabledWebView
             android:id="@+id/movie_web_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
