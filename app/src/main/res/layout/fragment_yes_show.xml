@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.adamapps.showbase.Fragments.YesMovieFragment">
+
+
+    <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_swipe">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/yes_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
+
+    <com.ldoublem.loadingviewlib.view.LVFunnyBar
+    android:id="@+id/funnyBar"
+    android:layout_width="140dp"
+    android:layout_height="140dp"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/nextBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/ic_arrow_forward_black_24dp"
+        app:fab_colorNormal="@color/colorAccent"
+        app:fab_size="normal" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/backBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/ic_arrow_back"
+        app:fab_colorNormal="@color/colorAccent"
+        app:fab_size="normal" />
+
+</RelativeLayout>
