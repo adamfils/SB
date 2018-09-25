@@ -128,7 +128,7 @@ public class YesShowFragment extends Fragment {
         new MyTask(url).execute();
 
         mWaveSwipeRefreshLayout = view.findViewById(R.id.main_swipe);
-        mWaveSwipeRefreshLayout.setWaveColor(Color.argb(200,213, 23, 78));
+        mWaveSwipeRefreshLayout.setWaveColor(Color.argb(200, 213, 23, 78));
         mWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -248,7 +248,11 @@ public class YesShowFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull YesHolder holder, final int position) {
-            holder.setImage(getContext(), image.get(position));
+            if (!image.get(position).isEmpty()) {
+                holder.setImage(getContext(), image.get(position));
+            } else {
+                holder.setImage(getContext(), "google.com");
+            }
             holder.episodeText.setText(episodeArray.get(position));
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -258,9 +262,12 @@ public class YesShowFragment extends Fragment {
                     YoYo.with(Techniques.RubberBand).duration(500).playOn(v);
                     if (position < titleArray.size()) {
                         Intent i = new Intent(getContext(), MovieDetail.class);
-                        i.putExtra("title", titleArray.get(position));
-                        i.putExtra("link", linkArray.get(position));
-                        i.putExtra("image", imageArray.get(position));
+                        if (titleArray.get(position) != null)
+                            i.putExtra("title", titleArray.get(position));
+                        if (linkArray.get(position) != null)
+                            i.putExtra("link", linkArray.get(position));
+                        if (imageArray.get(position) != null)
+                            i.putExtra("image", imageArray.get(position));
                         //floatMenu.close(true);
                         startActivity(i);
                     }
@@ -270,7 +277,7 @@ public class YesShowFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return image.size();
+            return title.size();
         }
     }
 
@@ -292,7 +299,8 @@ public class YesShowFragment extends Fragment {
         }
 
         void setImage(final Context c, final String image) {
-            Picasso.with(c).load(image).error(R.drawable.noimage).placeholder(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(imageView);
+            if (!image.isEmpty())
+                Picasso.with(c).load(image).error(R.drawable.noimage).placeholder(R.drawable.noimage).memoryPolicy(MemoryPolicy.NO_CACHE).into(imageView);
         }
     }
 

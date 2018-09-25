@@ -170,8 +170,8 @@ public class YesMovieFragment extends Fragment {
                     if (tabs instanceof TabLayout) {
                         tabLayout = (TabLayout) tabs;
                         tabLayout.startAnimation(slide_up);
-                        if (tabLayout.getSelectedTabPosition() != 0) {
-                            TabLayout.Tab tab = tabLayout.getTabAt(0);
+                        if (tabLayout.getSelectedTabPosition() != 1) {
+                            TabLayout.Tab tab = tabLayout.getTabAt(1);
                             tab.select();
                         }
                         if (pager instanceof ViewPager) {
@@ -436,7 +436,7 @@ public class YesMovieFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return image.size();
+            return title.size();
         }
     }
 

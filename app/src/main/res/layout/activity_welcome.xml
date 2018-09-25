@@ -16,15 +16,15 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/welcome_backdrop"/>
+        android:background="@drawable/welcome_backdrop" />
 
 
     <Button
         android:id="@+id/google_sign_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="50dp"
+        android:layout_above="@+id/emailButton"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="80dp"
         android:layout_marginRight="80dp"
         android:background="@drawable/google_bg"
@@ -37,5 +37,21 @@
         android:textAlignment="center"
         android:textColor="#000"
         android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/emailButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:text="Email/Password"
+        android:paddingEnd="10dp"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:drawableLeft="@drawable/ic_email_color"
+        android:background="@drawable/google_bg"
+        android:onClick="OpenEmail"/>
 
 </RelativeLayout>

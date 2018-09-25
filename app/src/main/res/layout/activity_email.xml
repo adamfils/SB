@@ -1,38 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.adamapps.showbase.StartUp.EmailActivity">
+    android:background="@drawable/email_activity_bg"
+    tools:context=".StartUp.EmailActivity">
 
-    <include
-        layout="@layout/toolbar"
-        android:id="@+id/tool"/>
 
     <EditText
         android:id="@+id/emailField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tool"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/email_bg"
+        android:hint="Email"
         android:inputType="textEmailAddress"
-        android:hint="Email"/>
+        android:padding="15dp" />
 
     <EditText
         android:id="@+id/passwordField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/emailField"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/email_bg"
+        android:hint="Password"
         android:inputType="textPassword"
-        android:hint="Password" />
+        android:padding="15dp" />
 
     <Button
+        android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"
         android:layout_below="@+id/passwordField"
-        android:onClick="EmailLogin"/>
+        android:onClick="EmailLogin"
+        android:background="@drawable/google_bg"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textColor="@color/colorAccent"
+        android:text="Login" />
+
+    <Button
+        android:id="@+id/signUpButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loginButton"
+        android:onClick="EmailSignUp"
+        android:background="@drawable/google_bg_black"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textColor="#000"
+        android:text="SignUp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/signUpButton"
+        android:text="Can't Remember Your Password?"
+        android:textSize="16sp"
+        android:textColor="#fff"
+        android:textStyle="bold"
+        android:onClick="ResetEmail"
+        android:padding="13dp" />
+
 
 
 </RelativeLayout>

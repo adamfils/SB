@@ -162,9 +162,9 @@ public class MovieDetail extends AppCompatActivity {
 
         if (title != null)
             titleText.setText(title);
-        if (image != null) {
-            Picasso.with(getApplicationContext()).load(image).error(R.drawable.noimage).into(backBlur);
-            Picasso.with(getApplicationContext()).load(image).error(R.drawable.noimage).into(burnsView);
+        if (image != null && !image.isEmpty()) {
+            Picasso.with(getApplicationContext()).load(image).placeholder(R.drawable.noimage).error(R.drawable.noimage).into(backBlur);
+            Picasso.with(getApplicationContext()).load(image).placeholder(R.drawable.noimage).error(R.drawable.noimage).into(burnsView);
         }
         //Toast.makeText(this, "Title = "+link, Toast.LENGTH_SHORT).show();
         new DetailTask().execute();
@@ -180,7 +180,7 @@ public class MovieDetail extends AppCompatActivity {
                 if (image != null)
                     map.put("image", image);
                 map.put("tag","yes");
-                if (title != null && FirebaseAuth.getInstance().getCurrentUser() != null) {
+                if (title != null ) {
                     FirebaseDatabase.getInstance().getReference().child("ShowBaseFavorite")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(title.replaceAll("[\\[.#$\\]]", ""))
                             .updateChildren(map);

@@ -1,4 +1,4 @@
-package com.adamapps.muvi;
+package com.adamapps.showbase;
 
 import org.junit.Test;
 

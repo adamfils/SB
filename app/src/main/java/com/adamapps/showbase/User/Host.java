@@ -20,13 +20,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.adamapps.showbase.Fragments.CategoryFragment;
 import com.adamapps.showbase.Adapter.TabPagerAdapter;
 import com.adamapps.showbase.Fragments.YesMovieFragment;
 import com.adamapps.showbase.Fragments.YesShowFragment;
 import com.adamapps.showbase.R;
 import com.adamapps.showbase.Services.NotificationService;
 import com.adamapps.showbase.StartUp.Welcome;
-import com.adamapps.showbase.TvShow.Show;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.facebook.ads.Ad;
@@ -65,7 +65,7 @@ public class Host extends AppCompatActivity {
 
 
 
-        Boolean isServiceRunning = Show.ServiceTools.isServiceRunning(
+        Boolean isServiceRunning = ServiceTools.isServiceRunning(
                 this.getApplicationContext(),
                 NotificationService.class);
 
@@ -84,8 +84,6 @@ public class Host extends AppCompatActivity {
 
         // Request an ad
         adView.loadAd();
-
-
 
         interstitialAd = new InterstitialAd(this,"252221818766145_252221892099471");
         //AdSettings.addTestDevice("0165ff96-12fd-4485-9221-0f61e306b990");
@@ -123,19 +121,15 @@ public class Host extends AppCompatActivity {
             }
         });
 
-
-
-
         searchView = findViewById(R.id.searchView);
 
 
-        updateRef = FirebaseDatabase.getInstance().getReference("ShowbaseLock/v1,0/lock");
+        updateRef = FirebaseDatabase.getInstance().getReference("ShowbaseLock/v1,1/lock");
         updateRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 AlertDialog alertDialog = null;
-                if (dataSnapshot.getValue(Boolean.class)) {
-                    //finish();
+                if (dataSnapshot.getValue(Boolean.class)!=null&&dataSnapshot.getValue(Boolean.class)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(Host.this);
                     View v = getLayoutInflater().inflate(R.layout.update_dialog_layout, null);
                     Button update = v.findViewById(R.id.warning_update_btn);
@@ -170,11 +164,7 @@ public class Host extends AppCompatActivity {
                     alertDialog.setCanceledOnTouchOutside(false);
                     alertDialog.show();
                 }
-                if (!dataSnapshot.getValue(Boolean.class)) {
-                    if (alertDialog != null && alertDialog.isShowing()) {
-                        alertDialog.dismiss();
-                    }
-                }
+
             }
 
             @Override
@@ -202,7 +192,7 @@ public class Host extends AppCompatActivity {
 
     public void configureTabLayout() {
         final TabLayout tabLayout = findViewById(R.id.tab_layout);
-
+        tabLayout.addTab(tabLayout.newTab().setText("Genre"));
         tabLayout.addTab(tabLayout.newTab().setText("Movie"));
         tabLayout.addTab(tabLayout.newTab().setText("Tv Show"));
 
@@ -262,6 +252,7 @@ public class Host extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         TabPagerAdapter adapter = new TabPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new CategoryFragment(), "GENRE");
         adapter.addFragment(new YesMovieFragment(), "Movie");
         adapter.addFragment(new YesShowFragment(), "Show");
         viewPager.setAdapter(adapter);
